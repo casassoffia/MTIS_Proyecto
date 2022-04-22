@@ -1,0 +1,271 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "COMPROBAR HOTEL",
+    "description" : "API para COMPROBAR HOTEL",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/futratioiw/ComprobarHotel/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/comprobarFechaLugar/{fechaIn}/{fechaOut}/{lugar}" : {
+      "post" : {
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "fechaIn",
+          "in" : "path",
+          "description" : "Check-in con formato DD-MM-YYYY",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaOut",
+          "in" : "path",
+          "description" : "Check-out con formato DD-MM-YYYY",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "lugar",
+          "in" : "path",
+          "description" : "pasar lugar de la estancia",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPersonas/{n}" : {
+      "post" : {
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "n",
+          "in" : "path",
+          "description" : "Número de personas",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPrecios/{precioInicio}/{precioFin}" : {
+      "post" : {
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "precioInicio",
+          "in" : "path",
+          "description" : "Rango inicial del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "precioFin",
+          "in" : "path",
+          "description" : "Rango final del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarDisponibilidad" : {
+      "post" : {
+        "summary" : "Comprobar hoteles disponibles",
+        "parameters" : [ {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Hotel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Melia"
+          },
+          "description" : {
+            "type" : "string",
+            "example" : "Hotel con vistas al mar"
+          },
+          "precioNoche" : {
+            "type" : "number",
+            "example" : 123.96
+          },
+          "numeroPersonas" : {
+            "type" : "integer",
+            "example" : 2
+          },
+          "puntuacion" : {
+            "type" : "integer",
+            "example" : 7
+          },
+          "disponibilidad" : {
+            "type" : "boolean",
+            "example" : true
+          },
+          "lugar" : {
+            "type" : "string",
+            "example" : "Barcelona"
+          }
+        },
+        "example" : {
+          "numeroPersonas" : 2,
+          "disponibilidad" : true,
+          "puntuacion" : 7,
+          "precioNoche" : 123.96,
+          "lugar" : "Barcelona",
+          "name" : "Melia",
+          "description" : "Hotel con vistas al mar",
+          "id" : 1
+        }
+      }
+    }
+  }
+}
