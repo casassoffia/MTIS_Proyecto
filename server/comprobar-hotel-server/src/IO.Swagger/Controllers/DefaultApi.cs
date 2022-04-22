@@ -18,6 +18,8 @@ using IO.Swagger.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using IO.Swagger.Models;
+using MySql.Data.MySqlClient;
+using NPOI.SS.Util;
 
 namespace IO.Swagger.Controllers
 { 
@@ -68,19 +70,84 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ComprobarFechaLugarFechaInFechaOutLugarPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarFechaLugarFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
-        { 
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Hotel>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
-            
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+
+            // Miramos clave
+            MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaIncio date");
+            cmdClave1.ExecuteNonQuery();
+            con.Close();
+            con.Open();
+            MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaFin date");
+            cmdClave3.ExecuteNonQuery();
+            con.Close();
+            con.Open();
+            SimpleDateFormat fecha1 = new SimpleDateFormat(fechaIn);
+            SimpleDateFormat fecha2 = new SimpleDateFormat(fechaOut);
+            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel where fechaIncio <=" + fecha1 + "OR fechaFin >=" + fecha2);
+
+            MySqlDataReader reader = cmdClave.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+
+
+                int codigoHotel;
+                
+                string exampleJson = "[";
+                while (reader.Read())
+                {
+                    codigoHotel = reader.GetInt32("codigoHotel");
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id =" + codigoHotel);
+
+                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+                    string nombre;
+                    if (reader2.Read())
+                    {
+                        nombre = reader2.GetString("name");
+                        exampleJson += " {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \""+nombre+"\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}";
+                        if (reader.Read())
+                        {
+                            exampleJson += ", ";
+                        }
+                        
                         var example = exampleJson != null
                         ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
                         : default(List<Hotel>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+
+                    }
+
+                    
+
+                }
+                
+                exampleJson += " ]";
+                con.Close();
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                }
+
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+
+            }
+            else
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+            }
+
+          
+           
+            
         }
 
         /// <summary>
