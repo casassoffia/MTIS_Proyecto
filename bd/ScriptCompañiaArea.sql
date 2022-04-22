@@ -147,8 +147,8 @@ CREATE TABLE `reservaHotel` (
   `codigoHotel` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` string DEFAULT NULL,
+  `fechaFin` string DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoHotel) references hotel(id),
   foreign key (dniCliente) references cliente(dni)
@@ -176,8 +176,8 @@ CREATE TABLE `resrevaCoche` (
   `codigoCoche` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` string DEFAULT NULL,
+  `fechaFin` string DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoCoche) references coche(id),
   foreign key (dniCliente) references cliente(dni)
@@ -205,8 +205,8 @@ CREATE TABLE `reservaBillete` (
   `codigoBillete` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` string DEFAULT NULL,
+  `fechaFin` string DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoBillete) references billete(id),
   foreign key (dniCliente) references cliente(dni)
