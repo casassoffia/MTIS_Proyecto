@@ -28,6 +28,7 @@ namespace IO.Swagger.Controllers
     [ApiController]
     public class DefaultApiController : ControllerBase
     { 
+        public List<Hotel> hoteles = new List<Hotel>();
         /// <summary>
         /// Comprobar hoteles disponibles
         /// </summary>
@@ -40,12 +41,15 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ComprobarDisponibilidadPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarDisponibilidadPost([FromQuery][Required()]List<Hotel> listaHoteles)
-        { 
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Hotel>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
+            listaHoteles = hoteles;
+
+
             string exampleJson = null;
             exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
             
@@ -158,6 +162,7 @@ namespace IO.Swagger.Controllers
             }
             else
             {
+                hoteles = JsonConvert.DeserializeObject<List<Hotel>>(exampleJson);
                 return new ObjectResult(exampleJson) { StatusCode = 200 };
             }
         }
@@ -175,12 +180,14 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ComprobarPersonasNPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarPersonasNPost([FromRoute][Required]int? n, [FromQuery][Required()]List<Hotel> listaHoteles)
-        { 
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Hotel>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
+            listaHoteles = hoteles;
+
             string exampleJson = null;
             exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
             
@@ -204,12 +211,15 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ComprobarPreciosPrecioInicioPrecioFinPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarPreciosPrecioInicioPrecioFinPost([FromRoute][Required]decimal? precioInicio, [FromRoute][Required]decimal? precioFin, [FromQuery][Required()]List<Hotel> listaHoteles)
-        { 
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Hotel>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
+            listaHoteles = hoteles;
+
+
             string exampleJson = null;
             exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
             
