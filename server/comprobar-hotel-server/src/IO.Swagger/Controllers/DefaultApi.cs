@@ -19,7 +19,6 @@ using IO.Swagger.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using IO.Swagger.Models;
 using MySql.Data.MySqlClient;
-using NPOI.SS.Util;
 
 namespace IO.Swagger.Controllers
 { 
@@ -71,83 +70,96 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarFechaLugarFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
         {
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Hotel>));
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
             MySqlConnection con = new MySqlConnection();
             con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
-            con.Open();
 
-            // Miramos clave
-            MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaIncio date");
-            cmdClave1.ExecuteNonQuery();
-            con.Close();
-            con.Open();
-            MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaFin date");
-            cmdClave3.ExecuteNonQuery();
-            con.Close();
-            con.Open();
-            SimpleDateFormat fecha1 = new SimpleDateFormat(fechaIn);
-            SimpleDateFormat fecha2 = new SimpleDateFormat(fechaOut);
-            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel where fechaIncio <=" + fecha1 + "OR fechaFin >=" + fecha2);
+            // INTRODUCIR FECHAS EN FORMATO 2022-04-28
 
+            // Cambiamos fecha de string a date
+            con.Open();
+            MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaInicio date", con);
+            cmdClave1.ExecuteReader();
+            con.Close();
+
+            con.Open();
+            MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaFin date", con);
+            cmdClave3.ExecuteReader();
+            con.Close();
+
+            DateTime fecha1 = DateTime.ParseExact(fechaIn, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime fecha2 = DateTime.ParseExact(fechaOut, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+
+            con.Open();
+            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel where fechaInicio <= @fecha1 OR fechaFin >= @fecha2", con);
+            cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
+            cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
             MySqlDataReader reader = cmdClave.ExecuteReader();
 
+            int codigoH= 0;
+            List<int> codigosHoteles = new List<int>();
             if (reader.HasRows)
             {
-
-
-                int codigoHotel;
-                
-                string exampleJson = "[";
                 while (reader.Read())
                 {
-                    codigoHotel = reader.GetInt32("codigoHotel");
-                    con.Close();
-                    con.Open();
-                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id =" + codigoHotel);
-
-                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
-                    string nombre;
-                    if (reader2.Read())
-                    {
-                        nombre = reader2.GetString("name");
-                        exampleJson += " {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \""+nombre+"\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}";
-                        if (reader.Read())
-                        {
-                            exampleJson += ", ";
-                        }
-                        
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                        : default(List<Hotel>);            //TODO: Change the data returned
-
-                    }
-
-                    
-
+                    codigoH = reader.GetInt32("codigoHotel");
+                    codigosHoteles.Add(codigoH);
                 }
-                
-                exampleJson += " ]";
+
                 con.Close();
-                if (exampleJson == null)
-                {
-                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
-                }
-
-                    return new ObjectResult(exampleJson) { StatusCode = 200 };
-
-            }
-            else
+            } else 
             {
                 return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
             }
 
-          
-           
-            
+            string exampleJson = "[";
+            foreach (int codigoHotel in codigosHoteles)
+            {
+                con.Open();
+                MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id=@id and lugar=@lugar", con);
+                cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
+                cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                int idH = 0, numP = 0, punt = 0;
+                string name = "", description = "", lug = "";
+                double precioNoche = 0.0;
+                bool disp = false;
+
+
+                if (reader2.Read())
+                {
+                    idH = reader.GetInt32("id");
+                    name = reader2.GetString("name");
+                    description = reader2.GetString("description");
+                    precioNoche = reader2.GetDouble("precioNoche");
+                    numP = reader2.GetInt32("numeroPersonas");
+                    punt = reader2.GetInt32("puntuacion");
+                    disp = reader2.GetBoolean("disponibilidad");
+                    lug = reader2.GetString("lugar");
+
+                    exampleJson += " {\n  \"numeroPersonas\" : " + numP + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt + ",\n  \"precioNoche\" : " + precioNoche + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH + " \n}";
+                    if (reader2.Read())
+                    {
+                        exampleJson += ", ";
+                    }
+
+                    var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                    : default(List<Hotel>);
+                }
+
+                exampleJson += " ]";
+                con.Close();
+            }
+
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+            }
+            else
+            {
+                return new ObjectResult(exampleJson) { StatusCode = 200 };
+            }
         }
 
         /// <summary>
