@@ -80,6 +80,9 @@ namespace IO.Swagger.Controllers
             // INTRODUCIR FECHAS EN FORMATO 2022-04-28
 
             // Cambiamos fecha de string a date
+        
+            
+            
             con.Open();
             MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaInicio date", con);
             cmdClave1.ExecuteReader();
@@ -119,7 +122,7 @@ namespace IO.Swagger.Controllers
             foreach (int codigoHotel in codigosHoteles)
             {
                 con.Open();
-                MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id=@id and lugar=@lugar", con);
+                MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugar=@lugar", con);
                 cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
                 cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                 MySqlDataReader reader2 = cmdClave2.ExecuteReader();
@@ -127,32 +130,41 @@ namespace IO.Swagger.Controllers
                 int idH = 0, numP = 0, punt = 0;
                 string name = "", description = "", lug = "";
                 double precioNoche = 0.0;
-                bool disp = false;
+                string disp = "";
 
 
                 if (reader2.Read())
                 {
-                    idH = reader.GetInt32("id");
+                    idH = reader2.GetInt32("id");
                     name = reader2.GetString("name");
                     description = reader2.GetString("description");
                     precioNoche = reader2.GetDouble("precioNoche");
                     numP = reader2.GetInt32("numeroPersonas");
                     punt = reader2.GetInt32("puntuacion");
-                    disp = reader2.GetBoolean("disponibilidad");
+                    if (reader2.GetBoolean("disponibilidad"))
+                    {
+                        disp = "true";
+                    }
+                    else
+                    {
+                        disp = "false";
+                    }
+                     
                     lug = reader2.GetString("lugar");
 
-                    exampleJson += " {\n  \"numeroPersonas\" : " + numP + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt + ",\n  \"precioNoche\" : " + precioNoche + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH + " \n}";
+                    exampleJson += " {\n  \"numeroPersonas\" : " + numP.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt.ToString() + ",\n  \"precioNoche\" : " + precioNoche.ToString() + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH.ToString() + " \n}";
                     if (reader2.Read())
                     {
                         exampleJson += ", ";
                     }
 
-                    var example = exampleJson != null
-                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                    : default(List<Hotel>);
+                    
                 }
 
                 exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                    : default(List<Hotel>);
                 con.Close();
             }
 
