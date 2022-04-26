@@ -193,20 +193,39 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
         public virtual IActionResult ComprobarPersonasNPost([FromRoute][Required]int? n, [FromQuery][Required()]List<Hotel> listaHoteles)
         {
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Hotel>));
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            listaHoteles = hoteles;
-
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
+            List<Hotel> filtradoHoteles = listaHoteles;
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            for(int i=0; i < listaHoteles.Count; i++)
+            {
+                if (listaHoteles[i].NumeroPersonas != n)
+                {
+                    filtradoHoteles.Remove(listaHoteles[i]);
+                }
+            }
+            hoteles = filtradoHoteles;
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                        : default(List<Hotel>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            string exampleJson = "[";
+            for (int i=0; i < filtradoHoteles.Count; i++)
+            {
+                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + filtradoHoteles[i].Disponibilidad.ToString() + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
+                if(i!=(filtradoHoteles.Count - 1))
+                {
+                    exampleJson += ", ";
+                }
+            }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                : default(List<Hotel>);
+            con.Close();
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+            }
+            
+            return new ObjectResult(exampleJson) { StatusCode = 200 };
         }
 
         /// <summary>
