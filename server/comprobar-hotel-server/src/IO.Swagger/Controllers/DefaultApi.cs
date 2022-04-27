@@ -160,10 +160,11 @@ namespace IO.Swagger.Controllers
                     lug = reader2.GetString("lugar");
 
                     exampleJson += " {\n  \"numeroPersonas\" : " + numP.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt.ToString() + ",\n  \"precioNoche\" : " + precioNoche.ToString() + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH.ToString() + " \n}";
-                    if (!(contador+1).ToString().Equals(readerContar.ToString()))
+                    if (!(contador).ToString().Equals(readerContar.ToString()))
                     {
                         exampleJson += ", ";
                     }
+                    contador++;
 
                     
                 }
@@ -199,25 +200,34 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarPersonasNPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
-        public virtual IActionResult ComprobarPersonasNPost([FromRoute][Required]int? n, [FromQuery][Required()]List<Hotel> listaHoteles)
+        public virtual IActionResult ComprobarPersonasNPost([FromRoute][Required]int? n, [FromBody][Required()]List<Hotel> listaHoteles)
         {
-            List<Hotel> filtradoHoteles = listaHoteles;
+            List<Hotel> filtradoHoteles = new List<Hotel>();
             MySqlConnection con = new MySqlConnection();
             con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
             con.Open();
             for(int i=0; i < listaHoteles.Count; i++)
             {
-                if (listaHoteles[i].NumeroPersonas != n)
+                if (listaHoteles[i].NumeroPersonas == n)
                 {
-                    filtradoHoteles.Remove(listaHoteles[i]);
+                    filtradoHoteles.Add(listaHoteles[i]);
                 }
             }
             hoteles = filtradoHoteles;
             
             string exampleJson = "[";
+            string disp = "";
             for (int i=0; i < filtradoHoteles.Count; i++)
             {
-                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + filtradoHoteles[i].Disponibilidad.ToString() + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
+                if (filtradoHoteles[i].Disponibilidad.Value)
+                {
+                    disp = "true";
+                }
+                else
+                {
+                    disp = "false";
+                }
+                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
                 if(i!=(filtradoHoteles.Count - 1))
                 {
                     exampleJson += ", ";
