@@ -119,21 +119,28 @@ namespace IO.Swagger.Controllers
             }
 
             string exampleJson = "[";
+            Console.WriteLine(codigosHoteles.Count);
             foreach (int codigoHotel in codigosHoteles)
             {
+                con.Open();
+                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where id NOT IN (@id) and lugar=@lugar", con);
+                cmdClave5.Parameters.AddWithValue("@id", codigoHotel);
+                cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                var readerContar = cmdClave5.ExecuteScalar();
+                con.Close();
                 con.Open();
                 MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugar=@lugar", con);
                 cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
                 cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                 MySqlDataReader reader2 = cmdClave2.ExecuteReader();
-
+                var contador = 1;
                 int idH = 0, numP = 0, punt = 0;
                 string name = "", description = "", lug = "";
                 double precioNoche = 0.0;
                 string disp = "";
 
 
-                if (reader2.Read())
+                while (reader2.Read())
                 {
                     idH = reader2.GetInt32("id");
                     name = reader2.GetString("name");
@@ -153,7 +160,7 @@ namespace IO.Swagger.Controllers
                     lug = reader2.GetString("lugar");
 
                     exampleJson += " {\n  \"numeroPersonas\" : " + numP.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt.ToString() + ",\n  \"precioNoche\" : " + precioNoche.ToString() + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH.ToString() + " \n}";
-                    if (reader2.Read())
+                    if (!(contador+1).ToString().Equals(readerContar.ToString()))
                     {
                         exampleJson += ", ";
                     }
@@ -175,6 +182,7 @@ namespace IO.Swagger.Controllers
             else
             {
                 hoteles = JsonConvert.DeserializeObject<List<Hotel>>(exampleJson);
+                Console.WriteLine(exampleJson);
                 return new ObjectResult(exampleJson) { StatusCode = 200 };
             }
         }
