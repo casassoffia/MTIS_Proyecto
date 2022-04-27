@@ -259,23 +259,55 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarPreciosPrecioInicioPrecioFinPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Hotel>), description: "Hoteles con las características")]
-        public virtual IActionResult ComprobarPreciosPrecioInicioPrecioFinPost([FromRoute][Required]decimal? precioInicio, [FromRoute][Required]decimal? precioFin, [FromQuery][Required()]List<Hotel> listaHoteles)
+        public virtual IActionResult ComprobarPreciosPrecioInicioPrecioFinPost([FromRoute][Required]decimal? precioInicio, [FromRoute][Required]decimal? precioFin, [FromBody][Required()]List<Hotel> listaHoteles)
         {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Hotel>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
-            listaHoteles = hoteles;
+            List<Hotel> filtradoHoteles = new List<Hotel>();
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            for (int i = 0; i < listaHoteles.Count; i++)
+            {
+                if (listaHoteles[i].PrecioNoche <= precioFin && listaHoteles[i].PrecioNoche >= precioInicio)
+                {
+                    filtradoHoteles.Add(listaHoteles[i]);
+                }
+            }
+            hoteles = filtradoHoteles;
 
+            string exampleJson = "[";
+            string disp = "";
+            for (int i = 0; i < filtradoHoteles.Count; i++)
+            {
+                if (filtradoHoteles[i].Disponibilidad.Value)
+                {
+                    disp = "true";
+                }
+                else
+                {
+                    disp = "false";
+                }
+                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
+                if (i != (filtradoHoteles.Count - 1))
+                {
+                    exampleJson += ", ";
+                }
+            }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                : default(List<Hotel>);
+            con.Close();
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+            }
 
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n}, {\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"puntuacion\" : 7,\n  \"precioNoche\" : 123.96,\n  \"lugar\" : \"Barcelona\",\n  \"name\" : \"Melia\",\n  \"description\" : \"Hotel con vistas al mar\",\n  \"id\" : 1\n} ]";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                        : default(List<Hotel>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return new ObjectResult(exampleJson) { StatusCode = 200 };
         }
     }
 }
