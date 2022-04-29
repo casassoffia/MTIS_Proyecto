@@ -1,0 +1,143 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Hotel",
+    "description" : "API del HOTEL",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/aditwitter20212022/Hotel/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/hoteles" : {
+      "get" : {
+        "summary" : "Obtiene el listado de todos los hoteles",
+        "responses" : {
+          "200" : {
+            "description" : "Muestra el listado de todos los hoteles",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No hay ningún hotel"
+          }
+        }
+      }
+    },
+    "/mejorHotel/{id}" : {
+      "get" : {
+        "summary" : "Obtiene el mejor hotel, el cual, presenta la mejor puntuación",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id del hotel",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Mejor puntuación de hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Hotel"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No existe hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Hotel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Melia"
+          },
+          "description" : {
+            "type" : "string",
+            "example" : "Hotel con vistas al mar"
+          },
+          "precioNoche" : {
+            "type" : "number",
+            "example" : 123.96
+          },
+          "numeroPersonas" : {
+            "type" : "integer",
+            "example" : 2
+          },
+          "puntuacion" : {
+            "type" : "integer",
+            "example" : 7
+          },
+          "disponibilidad" : {
+            "type" : "boolean",
+            "example" : true
+          },
+          "lugar" : {
+            "type" : "string",
+            "example" : "Alicante"
+          }
+        },
+        "example" : {
+          "numeroPersonas" : 2,
+          "disponibilidad" : true,
+          "puntuacion" : 7,
+          "precioNoche" : 123.96,
+          "lugar" : "Alicante",
+          "name" : "Melia",
+          "description" : "Hotel con vistas al mar",
+          "id" : 1
+        }
+      },
+      "inline_response_400" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "Error 400: No existe el hotel"
+          }
+        }
+      }
+    }
+  }
+}

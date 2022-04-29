@@ -152,6 +152,7 @@ namespace IO.Swagger.Controllers
             }
 
             string exampleJson = "[";
+            List<Hotel> leidos = new List<Hotel>();
             Console.WriteLine(codigosHoteles.Count);
             foreach (int codigoHotel in codigosHoteles)
             {
@@ -167,20 +168,20 @@ namespace IO.Swagger.Controllers
                 cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                 MySqlDataReader reader2 = cmdClave2.ExecuteReader();
                 var contador = 1;
-                int idH = 0, numP = 0, punt = 0;
-                string name = "", description = "", lug = "";
-                double precioNoche = 0.0;
+                
+              
                 string disp = "";
 
 
                 while (reader2.Read())
                 {
-                    idH = reader2.GetInt32("id");
-                    name = reader2.GetString("name");
-                    description = reader2.GetString("description");
-                    precioNoche = reader2.GetDouble("precioNoche");
-                    numP = reader2.GetInt32("numeroPersonas");
-                    punt = reader2.GetInt32("puntuacion");
+                    Hotel hotel = new Hotel();
+                    hotel.Id = reader2.GetInt32("id");
+                    hotel.Name = reader2.GetString("name");
+                    hotel.Description = reader2.GetString("description");
+                    hotel.PrecioNoche = Convert.ToDecimal( reader2.GetDouble("precioNoche"));
+                    hotel.NumeroPersonas = reader2.GetInt32("numeroPersonas");
+                    hotel.Puntuacion = reader2.GetInt32("puntuacion");
                     if (reader2.GetBoolean("disponibilidad"))
                     {
                         disp = "true";
@@ -190,24 +191,37 @@ namespace IO.Swagger.Controllers
                         disp = "false";
                     }
                      
-                    lug = reader2.GetString("lugar");
-
-                    exampleJson += " {\n  \"numeroPersonas\" : " + numP.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + punt.ToString() + ",\n  \"precioNoche\" : " + precioNoche.ToString() + ",\n  \"lugar\" : \"" + lug + "\",\n  \"name\" : \"" + name + "\",\n  \"description\" : \"" + description + "\",\n  \"id\" : " + idH.ToString() + " \n}";
-                    if (!(contador).ToString().Equals(readerContar.ToString()))
+                    hotel.Lugar = reader2.GetString("lugar");
+                    hotel.Disponibilidad = reader2.GetBoolean("disponibilidad");
+                    bool repetido = false;
+                    for(int i = 0; i < leidos.Count; i++)
                     {
-                        exampleJson += ", ";
+                        if (leidos[i].Id == hotel.Id)
+                        {
+                            repetido = true;
+                        }
                     }
-                    contador++;
-
+                    if (!repetido)
+                    {
+                        leidos.Add(hotel);
+                        exampleJson += " {\n  \"numeroPersonas\" : " + hotel.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + hotel.Puntuacion.ToString() + ",\n  \"precioNoche\" : " + hotel.PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + hotel.Lugar.ToString() + "\",\n  \"name\" : \"" + hotel.Name.ToString() + "\",\n  \"description\" : \"" + hotel.Description.ToString() + "\",\n  \"id\" : " + hotel.Id.ToString() + " \n}";
+                        if (!(contador).ToString().Equals(readerContar.ToString()))
+                        {
+                            exampleJson += ", ";
+                        }
+                        contador++;
+                    }
+                    
                     
                 }
-
-                exampleJson += " ]";
-                var example = exampleJson != null
-                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                    : default(List<Hotel>);
                 con.Close();
+
             }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                : default(List<Hotel>);
+            
 
             if (exampleJson == null)
             {
