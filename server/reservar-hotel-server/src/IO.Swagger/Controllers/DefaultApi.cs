@@ -65,19 +65,46 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(ReservaHotel), description: "Reserva del hotel se devuelve")]
         [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse4001), description: "No existe la reserva del hotel")]
         public virtual IActionResult ReservaHotelesConsultarIdGet([FromRoute][Required]int? id)
-        { 
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(ReservaHotel));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400, default(InlineResponse4001));
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
             string exampleJson = null;
-            exampleJson = "{\n  \"fechaInicio\" : \"fechaInicio\",\n  \"dniCliente\" : \"dniCliente\",\n  \"precioTotal\" : 6.027456183070403,\n  \"codigoHotel\" : \"codigoHotel\",\n  \"fechaFin\" : \"fechaFin\",\n  \"idReserva\" : 0\n}";
+            if (id != null)
+            {
+                MySqlCommand cmdClave = new MySqlCommand("select * from reservaHotel where idReserva=@id", con);
+                cmdClave.Parameters.AddWithValue("@id", id);
+                MySqlDataReader reader = cmdClave.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    int idReserva = reader.GetInt32("idReserva");
+                    string dni = reader.GetString("dniCliente");
+                    int idHotel = reader.GetInt32("codigoHotel");
+                    double precioTotal = reader.GetDouble("precioTotal");
+                    string fechaInicio = reader.GetString("fechaInicio");
+                    string fechaFin = reader.GetString("fechaFin");
+                    con.Close();
+                    
+                    exampleJson = "{\n  \"fechaInicio\" : \""+ fechaInicio + "\",\n  \"dniCliente\" : \""+ dni + "\",\n  \"precioTotal\" : "+ precioTotal.ToString() + ",\n  \"codigoHotel\" : \""+ idHotel.ToString() + "\",\n  \"fechaFin\" : \""+fechaFin+"\",\n  \"idReserva\" : "+id.ToString()+"\n}";
+                }
+
+                var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<ReservaHotel>(exampleJson)
+                : default(ReservaHotel);            //TODO: Change the data returned
+                return new ObjectResult(example);
+            }
+            else
+            {
+                return new ObjectResult("ERROR 400: NO EXISTE LA RESERVA") { StatusCode = 400 };
+            }
+               
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<ReservaHotel>(exampleJson)
-                        : default(ReservaHotel);            //TODO: Change the data returned
-            return new ObjectResult(example);
         }
 
         /// <summary>
