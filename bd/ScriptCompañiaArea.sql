@@ -168,10 +168,10 @@ UNLOCK TABLES;
 -- Table structure for table `resrevaCoche`
 --
 
-DROP TABLE IF EXISTS `resrevaCoche`;
+DROP TABLE IF EXISTS `reservaCoche`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `resrevaCoche` (
+CREATE TABLE `reservaCoche` (
   `idReserva` int NOT NULL AUTO_INCREMENT,
   `codigoCoche` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
@@ -188,9 +188,9 @@ CREATE TABLE `resrevaCoche` (
 -- Dumping data for table `reservaCoche`
 --
 
-LOCK TABLES `resrevaCoche` WRITE;
-/*!40000 ALTER TABLE `resrevaCoche` DISABLE KEYS */;
-/*!40000 ALTER TABLE `resrevaCoche` ENABLE KEYS */;
+LOCK TABLES `reservaCoche` WRITE;
+/*!40000 ALTER TABLE `reservaCoche` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reservaCoche` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
