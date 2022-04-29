@@ -1,0 +1,247 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "RESERVAR HOTEL",
+    "description" : "API para RESERVAR HOTEL",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/futratioiw/ReservaHotel/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/reserva/hoteles/nuevo" : {
+      "post" : {
+        "description" : "Crear una reserva del hotel",
+        "parameters" : [ {
+          "name" : "idHotel",
+          "in" : "query",
+          "description" : "pasar el id del mejor hotel",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva de Hotel",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaHotel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Reserva del hotel creada"
+          },
+          "400" : {
+            "description" : "No existe ese hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Esa reserva ya existe",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_409"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/borrar/{id}" : {
+      "delete" : {
+        "description" : "Eliminar reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva a borrar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Reserva borrada"
+          },
+          "404" : {
+            "description" : "No se ha encontrado la reserva",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/modificar/{id}" : {
+      "put" : {
+        "description" : "Decrementar precio de la reserva del hotel",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva del hotel",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaHotel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Hotel modificado"
+          },
+          "404" : {
+            "description" : "Hotel no encontrado"
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/consultar/{id}" : {
+      "get" : {
+        "description" : "Ver detalles de la reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva del hotek",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Reserva del hotel se devuelve",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReservaHotel"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No existe la reserva del hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ReservaHotel" : {
+        "required" : [ "codigoHotel", "dniCliente", "fechaFin", "fechaInicio", "idReserva", "precioTotal" ],
+        "type" : "object",
+        "properties" : {
+          "idReserva" : {
+            "type" : "integer"
+          },
+          "codigoHotel" : {
+            "type" : "string"
+          },
+          "dniCliente" : {
+            "type" : "string"
+          },
+          "precioTotal" : {
+            "type" : "number"
+          },
+          "fechaInicio" : {
+            "type" : "string"
+          },
+          "fechaFin" : {
+            "type" : "string"
+          }
+        },
+        "example" : {
+          "fechaInicio" : "fechaInicio",
+          "dniCliente" : "dniCliente",
+          "precioTotal" : 6.027456183070403,
+          "codigoHotel" : "codigoHotel",
+          "fechaFin" : "fechaFin",
+          "idReserva" : 0
+        }
+      },
+      "inline_response_400" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 400"
+          }
+        }
+      },
+      "inline_response_409" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 409"
+          }
+        }
+      },
+      "inline_response_404" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 404"
+          }
+        }
+      },
+      "inline_response_400_1" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "Error 400"
+          }
+        }
+      }
+    }
+  }
+}
