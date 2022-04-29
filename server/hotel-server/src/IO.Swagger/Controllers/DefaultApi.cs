@@ -32,20 +32,21 @@ namespace IO.Swagger.Controllers
         /// </summary>
         /// <response code="200">Muestra el listado de todos los hoteles</response>
         /// <response code="400">No hay ningún hotel</response>
-        [HttpGet]
+        [HttpPost]
         [Route("/aditwitter20212022/Hotel/1.0.0/hoteles")]
         [ValidateModelState]
-        [SwaggerOperation("HotelesGet")]
+        [SwaggerOperation("HotelGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(Hotel), description: "Muestra el mejor Hotel")]
-        public virtual IActionResult HoteleGet([FromBody][Required()] List<Hotel> listaHoteles)
+        public virtual IActionResult HotelGet([FromBody][Required()] List<Hotel> listaHoteles)
         { 
 
             Hotel mejorHotel = new Hotel();
+            mejorHotel.Puntuacion = 0;
             string disp = "";
             string exampleJson = "";
             for (int i = 0; i < listaHoteles.Count; i++)
             {
-                if(listaHoteles[i].Puntuacion > mejorHotel.Puntuacion)
+                if(listaHoteles[i].Puntuacion >= mejorHotel.Puntuacion)
                 {
                     mejorHotel = listaHoteles[i];
                 }
