@@ -1,0 +1,90 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "VALIDAR CLIENTE",
+    "description" : "API para VALIDAR CLIENTE",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/futratioiw/VALIDAR/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/validarDatosCliente/{dni}" : {
+      "get" : {
+        "summary" : "Validamos datos del cliente",
+        "parameters" : [ {
+          "name" : "dni",
+          "in" : "path",
+          "description" : "pasamos DNI del cliente",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Cliente ha sido validado",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Cliente"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No existe el cliente"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Cliente" : {
+        "required" : [ "dni", "email", "lastname", "name" ],
+        "type" : "object",
+        "properties" : {
+          "dni" : {
+            "type" : "string",
+            "example" : "12345678A"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Maria"
+          },
+          "lastname" : {
+            "type" : "string",
+            "format" : "string",
+            "example" : "Pérez"
+          },
+          "email" : {
+            "type" : "string",
+            "format" : "string",
+            "example" : "mariaperez22@gmail.com"
+          }
+        },
+        "example" : {
+          "name" : "Maria",
+          "dni" : "12345678A",
+          "email" : "mariaperez22@gmail.com",
+          "lastname" : "Pérez"
+        }
+      }
+    }
+  }
+}

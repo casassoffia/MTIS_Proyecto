@@ -147,8 +147,8 @@ CREATE TABLE `reservaHotel` (
   `codigoHotel` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` varchar(255) DEFAULT NULL,
+  `fechaFin` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoHotel) references hotel(id),
   foreign key (dniCliente) references cliente(dni)
@@ -168,16 +168,16 @@ UNLOCK TABLES;
 -- Table structure for table `resrevaCoche`
 --
 
-DROP TABLE IF EXISTS `resrevaCoche`;
+DROP TABLE IF EXISTS `reservaCoche`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `resrevaCoche` (
+CREATE TABLE `reservaCoche` (
   `idReserva` int NOT NULL AUTO_INCREMENT,
   `codigoCoche` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` varchar(255) DEFAULT NULL,
+  `fechaFin` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoCoche) references coche(id),
   foreign key (dniCliente) references cliente(dni)
@@ -188,9 +188,9 @@ CREATE TABLE `resrevaCoche` (
 -- Dumping data for table `reservaCoche`
 --
 
-LOCK TABLES `resrevaCoche` WRITE;
-/*!40000 ALTER TABLE `resrevaCoche` DISABLE KEYS */;
-/*!40000 ALTER TABLE `resrevaCoche` ENABLE KEYS */;
+LOCK TABLES `reservaCoche` WRITE;
+/*!40000 ALTER TABLE `reservaCoche` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reservaCoche` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -205,8 +205,8 @@ CREATE TABLE `reservaBillete` (
   `codigoBillete` int DEFAULT NULL,
   `dniCliente` varchar(255) DEFAULT NULL,
   `precioTotal` double DEFAULT NULL,
-  `fechaInicio` int DEFAULT NULL,
-  `fechaFin` int DEFAULT NULL,
+  `fechaInicio` varchar(255) DEFAULT NULL,
+  `fechaFin` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idReserva`),
   foreign key (codigoBillete) references billete(id),
   foreign key (dniCliente) references cliente(dni)
