@@ -1,0 +1,1586 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "SERVICIOS PROYECTO",
+    "description" : "API del PROYECTO",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/aditwitter20212022/proyecto/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  }, {
+    "url" : "https://virtserver.swaggerhub.com/mtisproyecto08/Proyecto/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/validarDatosCliente/{dni}" : {
+      "get" : {
+        "tags" : [ "CLIENTE" ],
+        "summary" : "Validamos datos del cliente",
+        "parameters" : [ {
+          "name" : "dni",
+          "in" : "path",
+          "description" : "pasamos DNI del cliente",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Cliente ha sido validado",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Cliente"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No existe el cliente"
+          }
+        }
+      }
+    },
+    "/comprobarFechaLugarHotel/{fechaIn}/{fechaOut}/{lugar}" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "fechaIn",
+          "in" : "path",
+          "description" : "Check-in con formato YYYY-MM-DD",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaOut",
+          "in" : "path",
+          "description" : "Check-out con formato YYYY-MM-DDY",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "lugar",
+          "in" : "path",
+          "description" : "Lugar de estancia",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPersonasHotel/{n}" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "n",
+          "in" : "path",
+          "description" : "Número de personas",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPreciosHotel/{precioInicio}/{precioFin}" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "summary" : "Comprobar hoteles para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "precioInicio",
+          "in" : "path",
+          "description" : "Rango inicial del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "precioFin",
+          "in" : "path",
+          "description" : "Rango final del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarDisponibilidadHotel" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "summary" : "Comprobar hoteles disponibles",
+        "parameters" : [ {
+          "name" : "listaHoteles",
+          "in" : "query",
+          "description" : "Lista de hoteles que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hotel"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hoteles con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Hotel"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay hoteles con esas características"
+          }
+        }
+      }
+    },
+    "/hotel" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "summary" : "Obtiene el hotel con mejor puntuación",
+        "parameters" : [ {
+          "name" : "hoteles",
+          "in" : "query",
+          "description" : "pasar lista de hoteles",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Hotel"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Hotel con mejor puntuación",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Hotel"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No hay ningún hotel"
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/nuevo" : {
+      "post" : {
+        "tags" : [ "HOTEL" ],
+        "description" : "Crear una reserva del hotel",
+        "parameters" : [ {
+          "name" : "idHotel",
+          "in" : "query",
+          "description" : "pasar el id del mejor hotel",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "dniCliente",
+          "in" : "query",
+          "description" : "pasar el dni del cliente",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaIn",
+          "in" : "query",
+          "description" : "pasar fecha inicio",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaOut",
+          "in" : "query",
+          "description" : "pasar fecha fin",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva de Hotel",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaHotel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Reserva del hotel creada"
+          },
+          "400" : {
+            "description" : "No existe ese hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Esa reserva ya existe",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_409"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/borrar/{id}" : {
+      "delete" : {
+        "tags" : [ "HOTEL" ],
+        "description" : "Eliminar reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva a borrar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Reserva borrada"
+          },
+          "404" : {
+            "description" : "No se ha encontrado la reserva",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/modificar/{id}" : {
+      "put" : {
+        "tags" : [ "HOTEL" ],
+        "description" : "Decrementar precio de la reserva del hotel",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva del hotel",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaHotel"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Hotel modificado"
+          },
+          "404" : {
+            "description" : "Hotel no encontrado"
+          }
+        }
+      }
+    },
+    "/reserva/hoteles/consultar/{id}" : {
+      "get" : {
+        "tags" : [ "HOTEL" ],
+        "description" : "Ver detalles de la reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva del hotek",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Reserva del hotel se devuelve",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReservaHotel"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No existe la reserva del hotel",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comprobarFechaLugarCoche/{fechaIn}/{fechaOut}/{lugar}" : {
+      "post" : {
+        "tags" : [ "COCHE" ],
+        "summary" : "Comprobar coches para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "fechaIn",
+          "in" : "path",
+          "description" : "Check-in con formato YYYY-MM-DD",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaOut",
+          "in" : "path",
+          "description" : "Check-out con formato YYYY-MM-DD",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "lugar",
+          "in" : "path",
+          "description" : "Pasar lugar de la estancia del coche",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coches con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Coche"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay coches con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPersonasCoche/{n}" : {
+      "post" : {
+        "tags" : [ "COCHE" ],
+        "summary" : "Comprobar coches para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "n",
+          "in" : "path",
+          "description" : "Número de personas",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "listaCoches",
+          "in" : "query",
+          "description" : "Lista de coches que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Coche"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coches con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Coche"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay coches con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPreciosCoche/{precioInicio}/{precioFin}" : {
+      "post" : {
+        "tags" : [ "COCHE" ],
+        "summary" : "Comprobar coches para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "precioInicio",
+          "in" : "path",
+          "description" : "Rango inicial del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "precioFin",
+          "in" : "path",
+          "description" : "Rango final del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "listaCoches",
+          "in" : "query",
+          "description" : "Lista de coches que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Coche"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coches con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Coche"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay coches con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarDisponibilidadCoche" : {
+      "post" : {
+        "tags" : [ "COCHE" ],
+        "summary" : "Comprobar coches disponibles",
+        "parameters" : [ {
+          "name" : "listaCoches",
+          "in" : "query",
+          "description" : "Lista de coches que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Coche"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coches con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Coche"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay coches con esas características"
+          }
+        }
+      }
+    },
+    "/coches" : {
+      "get" : {
+        "tags" : [ "COCHE" ],
+        "summary" : "Obtiene el coche con mejor puntuación",
+        "parameters" : [ {
+          "name" : "coches",
+          "in" : "query",
+          "description" : "pasar lista de coches",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Coche"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coche con mejor puntuación",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Coche"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No hay ningún coche"
+          }
+        }
+      }
+    },
+    "/reserva/coches/nuevo" : {
+      "post" : {
+        "tags" : [ "COCHE" ],
+        "description" : "Crear una reserva del coche",
+        "parameters" : [ {
+          "name" : "idCoche",
+          "in" : "query",
+          "description" : "pasar el id del mejor coche",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva de Coche",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaCoche"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Reserva del coche creada"
+          },
+          "400" : {
+            "description" : "No existe ese coche",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Esa reserva ya existe",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_409"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/coches/borrar/{id}" : {
+      "delete" : {
+        "tags" : [ "COCHE" ],
+        "description" : "Eliminar reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva a borrar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Reserva borrada"
+          },
+          "404" : {
+            "description" : "No se ha encontrado la reserva",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/coches/modificar/{id}" : {
+      "put" : {
+        "tags" : [ "COCHE" ],
+        "description" : "Decrementar precio de la reserva del coche",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva del coche",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaCoche"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Coche modificado"
+          },
+          "404" : {
+            "description" : "Coche no encontrado"
+          }
+        }
+      }
+    },
+    "/reserva/coches/consultar/{id}" : {
+      "get" : {
+        "tags" : [ "COCHE" ],
+        "description" : "Ver detalles de la reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva del coche",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Reserva del coche se devuelve",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReservaCoche"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No existe la reserva del coche",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comprobarFechaLugarBillete/{fechaIn}/{fechaOut}/{lugarIn}/{lugarOut}" : {
+      "post" : {
+        "tags" : [ "BILLETE" ],
+        "summary" : "Comprobar billetes para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "fechaIn",
+          "in" : "path",
+          "description" : "Check-in con formato YYYY-MM-DD",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fechaOut",
+          "in" : "path",
+          "description" : "Check-out con formato YYYY-MM-DD",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "lugarIn",
+          "in" : "path",
+          "description" : "pasar lugar origen de la estancia",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "lugarOut",
+          "in" : "path",
+          "description" : "pasar lugar destino de la estancia",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Billetes con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Billete"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay billetes con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPersonasBillete/{n}" : {
+      "post" : {
+        "tags" : [ "BILLETE" ],
+        "summary" : "Comprobar billetes para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "n",
+          "in" : "path",
+          "description" : "Número de personas",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "listaBilletes",
+          "in" : "query",
+          "description" : "Lista de bileltes que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Billete"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Billetes con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Billete"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay billetes con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarPreciosBillete/{precioInicio}/{precioFin}" : {
+      "post" : {
+        "tags" : [ "BILLETE" ],
+        "summary" : "Comprobar billetes para esas caracterísiticas",
+        "parameters" : [ {
+          "name" : "precioInicio",
+          "in" : "path",
+          "description" : "Rango inicial del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "precioFin",
+          "in" : "path",
+          "description" : "Rango final del precio",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "listaBilletes",
+          "in" : "query",
+          "description" : "Lista de billetes que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Billete"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Billetes con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Billete"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay billetes con esas características"
+          }
+        }
+      }
+    },
+    "/comprobarDisponibilidadBillete" : {
+      "post" : {
+        "tags" : [ "BILLETE" ],
+        "summary" : "Comprobar billetes disponibles",
+        "parameters" : [ {
+          "name" : "listaBilletes",
+          "in" : "query",
+          "description" : "Lista de billetes que cumplen las características anteriores",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Billete"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Billetes con las características",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Billete"
+                  },
+                  "x-content-type" : "application/json"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "ERROR 400: No hay billetes con esas características"
+          }
+        }
+      }
+    },
+    "/billetes" : {
+      "get" : {
+        "tags" : [ "BILLETE" ],
+        "summary" : "Obtiene el billete con mejor puntuación",
+        "parameters" : [ {
+          "name" : "billetes",
+          "in" : "query",
+          "description" : "pasar lista de billetes",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Billete"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Billete con mejor puntuación",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Billete"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No hay ningún billete"
+          }
+        }
+      }
+    },
+    "/reserva/billetes/nuevo" : {
+      "post" : {
+        "tags" : [ "BILLETE" ],
+        "description" : "Crear una reserva del billete",
+        "parameters" : [ {
+          "name" : "idBillete",
+          "in" : "query",
+          "description" : "pasar el id del mejor billete",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva de Billete",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaBillete"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Reserva del billete creada"
+          },
+          "400" : {
+            "description" : "No existe ese billete",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Esa reserva ya existe",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_409"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/billetes/borrar/{id}" : {
+      "delete" : {
+        "tags" : [ "BILLETE" ],
+        "description" : "Eliminar reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva a borrar",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Reserva borrada"
+          },
+          "404" : {
+            "description" : "No se ha encontrado la reserva",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva/billetes/modificar/{id}" : {
+      "put" : {
+        "tags" : [ "BILLETE" ],
+        "description" : "Decrementar precio de la reserva del billete",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "Reserva del billete",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReservaBillete"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Billete modificado"
+          },
+          "404" : {
+            "description" : "Billete no encontrado"
+          }
+        }
+      }
+    },
+    "/reserva/billetes/consultar/{id}" : {
+      "get" : {
+        "tags" : [ "BILLETE" ],
+        "description" : "Ver detalles de la reserva",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "pasar id de la reserva del billete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Reserva del billete se devuelve",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReservaBillete"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "No existe la reserva del billete",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_400_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Cliente" : {
+        "required" : [ "dni", "email", "lastname", "name" ],
+        "type" : "object",
+        "properties" : {
+          "dni" : {
+            "type" : "string",
+            "example" : "12345678A"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Maria"
+          },
+          "lastname" : {
+            "type" : "string",
+            "format" : "string",
+            "example" : "Pérez"
+          },
+          "email" : {
+            "type" : "string",
+            "format" : "string",
+            "example" : "mariaperez22@gmail.com"
+          }
+        },
+        "example" : {
+          "name" : "Maria",
+          "dni" : "12345678A",
+          "email" : "mariaperez22@gmail.com",
+          "lastname" : "Pérez"
+        }
+      },
+      "Hotel" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Melia"
+          },
+          "description" : {
+            "type" : "string",
+            "example" : "Hotel con vistas al mar"
+          },
+          "precioNoche" : {
+            "type" : "number",
+            "example" : 123.96
+          },
+          "numeroPersonas" : {
+            "type" : "integer",
+            "example" : 2
+          },
+          "puntuacion" : {
+            "type" : "integer",
+            "example" : 7
+          },
+          "disponibilidad" : {
+            "type" : "boolean",
+            "example" : true
+          },
+          "lugar" : {
+            "type" : "string",
+            "example" : "Alicante"
+          }
+        },
+        "example" : {
+          "numeroPersonas" : 2,
+          "disponibilidad" : true,
+          "puntuacion" : 7,
+          "precioNoche" : 123.96,
+          "lugar" : "Alicante",
+          "name" : "Melia",
+          "description" : "Hotel con vistas al mar",
+          "id" : 1
+        }
+      },
+      "Coche" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "modelo" : {
+            "type" : "string",
+            "example" : "modelo"
+          },
+          "marca" : {
+            "type" : "string",
+            "example" : "Mercedes"
+          },
+          "num_puertas" : {
+            "type" : "integer",
+            "example" : 5
+          },
+          "puntuacion" : {
+            "type" : "integer",
+            "example" : 5
+          },
+          "precio_Dia" : {
+            "type" : "integer",
+            "example" : 20
+          },
+          "numPlazas" : {
+            "type" : "integer",
+            "example" : 5
+          },
+          "disponible" : {
+            "type" : "boolean",
+            "example" : true
+          },
+          "lugar" : {
+            "type" : "string",
+            "example" : "Murcia"
+          }
+        },
+        "example" : {
+          "marca" : "Mercedes",
+          "puntuacion" : 5,
+          "num_puertas" : 5,
+          "numPlazas" : 5,
+          "lugar" : "Murcia",
+          "id" : 1,
+          "precio_Dia" : 20,
+          "modelo" : "modelo",
+          "disponible" : true
+        }
+      },
+      "Billete" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "Vueling"
+          },
+          "description" : {
+            "type" : "string",
+            "example" : "Billete a Mallorca"
+          },
+          "precio" : {
+            "type" : "number",
+            "example" : 129.96
+          },
+          "numeroPersonas" : {
+            "type" : "integer",
+            "example" : 2
+          },
+          "disponibilidad" : {
+            "type" : "boolean",
+            "example" : true
+          },
+          "lugar" : {
+            "type" : "string",
+            "example" : "Mallorca"
+          }
+        },
+        "example" : {
+          "precio" : 129.96,
+          "numeroPersonas" : 2,
+          "disponibilidad" : true,
+          "lugar" : "Mallorca",
+          "name" : "Vueling",
+          "description" : "Billete a Mallorca",
+          "id" : 1
+        }
+      },
+      "ReservaHotel" : {
+        "required" : [ "codigoHotel", "dniCliente", "fechaFin", "fechaInicio", "idReserva", "precioTotal" ],
+        "type" : "object",
+        "properties" : {
+          "idReserva" : {
+            "type" : "integer"
+          },
+          "codigoHotel" : {
+            "type" : "string"
+          },
+          "dniCliente" : {
+            "type" : "string"
+          },
+          "precioTotal" : {
+            "type" : "number"
+          },
+          "fechaInicio" : {
+            "type" : "string"
+          },
+          "fechaFin" : {
+            "type" : "string"
+          }
+        },
+        "example" : {
+          "fechaInicio" : "fechaInicio",
+          "dniCliente" : "dniCliente",
+          "precioTotal" : 6.027456183070403,
+          "codigoHotel" : "codigoHotel",
+          "fechaFin" : "fechaFin",
+          "idReserva" : 0
+        }
+      },
+      "ReservaCoche" : {
+        "required" : [ "codigoCoche", "dniCliente", "fechaFin", "fechaInicio", "idReserva", "precioTotal" ],
+        "type" : "object",
+        "properties" : {
+          "idReserva" : {
+            "type" : "integer"
+          },
+          "codigoCoche" : {
+            "type" : "string"
+          },
+          "dniCliente" : {
+            "type" : "string"
+          },
+          "precioTotal" : {
+            "type" : "number"
+          },
+          "fechaInicio" : {
+            "type" : "string"
+          },
+          "fechaFin" : {
+            "type" : "string"
+          }
+        },
+        "example" : {
+          "codigoCoche" : "codigoCoche",
+          "fechaInicio" : "fechaInicio",
+          "dniCliente" : "dniCliente",
+          "precioTotal" : 6.027456183070403,
+          "fechaFin" : "fechaFin",
+          "idReserva" : 0
+        }
+      },
+      "ReservaBillete" : {
+        "required" : [ "codigoBillete", "dniCliente", "fechaFin", "fechaInicio", "idReserva", "precioTotal" ],
+        "type" : "object",
+        "properties" : {
+          "idReserva" : {
+            "type" : "integer"
+          },
+          "codigoBillete" : {
+            "type" : "string"
+          },
+          "dniCliente" : {
+            "type" : "string"
+          },
+          "precioTotal" : {
+            "type" : "number"
+          },
+          "fechaInicio" : {
+            "type" : "string"
+          },
+          "fechaFin" : {
+            "type" : "string"
+          }
+        },
+        "example" : {
+          "fechaInicio" : "fechaInicio",
+          "codigoBillete" : "codigoBillete",
+          "dniCliente" : "dniCliente",
+          "precioTotal" : 6.027456183070403,
+          "fechaFin" : "fechaFin",
+          "idReserva" : 0
+        }
+      },
+      "inline_response_400" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 400"
+          }
+        }
+      },
+      "inline_response_409" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 409"
+          }
+        }
+      },
+      "inline_response_404" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "ERROR 404"
+          }
+        }
+      },
+      "inline_response_400_1" : {
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "example" : "Error 400"
+          }
+        }
+      }
+    }
+  }
+}
