@@ -105,7 +105,7 @@ namespace IO.Swagger.Controllers
         public virtual IActionResult ComprobarFechaLugarHotelFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
         {
             MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=ContraseñaParaMTIS";
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
 
             con.Open();
             MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaInicio date", con);
