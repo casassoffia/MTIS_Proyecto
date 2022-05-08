@@ -105,7 +105,7 @@ namespace IO.Swagger.Controllers
         public virtual IActionResult ComprobarFechaLugarHotelFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
         {
             MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=ContraseñaParaMTIS";
 
             con.Open();
             MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaInicio date", con);
@@ -122,7 +122,7 @@ namespace IO.Swagger.Controllers
 
             // INTRODUCIR FECHAS EN FORMATO 2022-04-28
             con.Open();
-            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel  where reservaHotel.fechaInicio < @fecha1 OR reservaHotel.fechaFin > @fecha2 ", con);
+            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel  where reservaHotel.fechaInicio >= @fecha1 AND reservaHotel.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
             cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
             cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
            MySqlDataReader reader = cmdClave.ExecuteReader();
