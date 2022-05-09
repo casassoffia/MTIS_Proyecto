@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" doc:name="HTTP Listener Configuration"/>
-    <http:request-config name="HTTP_Request_Flujo3" host="localhost" port="50352"  doc:name="HTTP Request Configuration" basePath="/futratioiw/VALIDAR/1.0.0"/>
     <http:request-config name="HTTP_Request_Configuration" host="localhost" port="50353" doc:name="HTTP Request Configuration" basePath="/futratioiw/ComprobarHotel/1.0.0"/>
-    <sub-flow name="ValidarCliente">
-        <expression-component doc:name="Expression"><![CDATA[flowVars.dni=message.inboundProperties.'http.query.params'.dni]]></expression-component>
-        <http:request config-ref="HTTP_Request_Flujo3" path="/validarDatosCliente/#[flowVars.dni]" method="GET" doc:name="HTTP"/>
-        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
-    </sub-flow>
-    <sub-flow name="Filtros">
-        <logger message="#[message.inboundProperties.'http.query.params'.fechaIn]" level="INFO" doc:name="Copy_of_Logger"/>
-        <http:request config-ref="HTTP_Request_Configuration" path="/comprobarFechaLugar/2022-02-11/2022-02-19/Alicante" method="POST" doc:name="HTTP"/>
-        <logger message="#[payload]" level="INFO" doc:name="Copy_of_Logger"/>
-    </sub-flow>
+    <http:request-config name="HTTP_Request_Configuration1" host="localhost" port="50352" basePath="/aditwitter20212022/proyecto/1.0.0" doc:name="HTTP Request Configuration"/>
     <flow name="proyectointegracionFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
-        <choice doc:name="Choice">
-            <when expression="#[message.inboundProperties.'http.query.params'.operacion=='validarCliente']">
-                <flow-ref name="ValidarCliente" doc:name="ValidarCliente"/>
-            </when>
-            <when expression="#[message.inboundProperties.'http.query.params'.operacion=='filtros']">
-                <flow-ref name="Filtros" doc:name="Filtros"/>
-            </when>
-        </choice>
+        <logger message="#[dw('payload.dni')]" level="INFO" doc:name="Logger"/>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.fechaInicio= dw('payload.fechaInicio');flowVars.fechaFin=dw('payload.fechaFin');flowVars.lugar=dw('payload.lugar');flowVars.numPersonas=dw('payload.numPersonas');flowVars.precioInicio=dw('payload.precioInicio');flowVars.precioFin=dw('payload.precioFin')]]></expression-component>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/validarDatosCliente/#[dw('payload.dni')]" method="GET" doc:name="HTTP"/>
+        <logger message="#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarFechaLugarHotel/#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" method="POST" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarPersonasHotel/#[flowVars.numPersonas]" method="POST" doc:name="HTTP">
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Request_Configuration1" path="comprobarPreciosHotel/#[flowVars.precioInicio]/#[flowVars.precioFin]" method="POST" doc:name="HTTP"/>
     </flow>
 </mule>
