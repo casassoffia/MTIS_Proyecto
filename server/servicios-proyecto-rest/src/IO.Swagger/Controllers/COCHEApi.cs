@@ -18,6 +18,7 @@ using IO.Swagger.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using IO.Swagger.Models;
+using MySql.Data.MySqlClient;
 
 namespace IO.Swagger.Controllers
 { 
@@ -26,31 +27,46 @@ namespace IO.Swagger.Controllers
     /// </summary>
     [ApiController]
     public class COCHEApiController : ControllerBase
-    { 
+    {
+        public List<Coche> coches = new List<Coche>();
+
         /// <summary>
         /// Obtiene el coche con mejor puntuación
         /// </summary>
         /// <param name="coches">pasar lista de coches</param>
         /// <response code="200">Coche con mejor puntuación</response>
         /// <response code="400">No hay ningún coche</response>
-        [HttpGet]
+        [HttpPost]
         [Route("/aditwitter20212022/proyecto/1.0.0/coches")]
         [ValidateModelState]
-        [SwaggerOperation("CochesGet")]
+        [SwaggerOperation("CochesPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(Coche), description: "Coche con mejor puntuación")]
-        public virtual IActionResult CochesGet([FromQuery][Required()]Coche coches)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Coche));
+        public virtual IActionResult CochesPost([FromBody][Required()] List<Coche> listaCoches)
+        {
+            Coche mejorCoche = new Coche();
+            mejorCoche.Puntuacion = 0;
+            string disp = "";
+            string exampleJson = "";
+            for (int i = 0; i < listaCoches.Count; i++)
+            {
+                if (listaCoches[i].Puntuacion >= mejorCoche.Puntuacion)
+                {
+                    mejorCoche = listaCoches[i];
+                }
+            }
+            if (mejorCoche.Disponible.Value)
+            {
+                disp = "true";
+            }
+            else
+            {
+                disp = "false";
+            }
+            exampleJson = "{\n  \"marca\" : \"" + mejorCoche.Marca.ToString() + "\",\n  \"puntuacion\" : " + mejorCoche.Puntuacion.ToString() + ",\n  \"num_puertas\" : " + mejorCoche.NumPuertas.ToString() + ",\n  \"numPlazas\" : " + mejorCoche.NumPlazas.ToString() + ",\n  \"lugar\" : \"" + mejorCoche.Lugar.ToString() + "\",\n  \"id\" : " + mejorCoche.Id.ToString() + ",\n  \"precio_Dia\" : " + mejorCoche.PrecioDia.ToString() + ",\n  \"modelo\" : \"" + mejorCoche.Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "{\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Coche>(exampleJson)
-                        : default(Coche);            //TODO: Change the data returned
+            var example = exampleJson != null
+            ? JsonConvert.DeserializeObject<Coche>(exampleJson)
+            : default(Coche);            //TODO: Change the data returned
             return new ObjectResult(example);
         }
 
@@ -65,20 +81,51 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarDisponibilidadCochePost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Coche>), description: "Coches con las características")]
-        public virtual IActionResult ComprobarDisponibilidadCochePost([FromQuery][Required()]List<Coche> listaCoches)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Coche>));
+        public virtual IActionResult ComprobarDisponibilidadCochePost([FromBody][Required()]List<Coche> listaCoches)
+        {
+            List<Coche> filtradoCoches = new List<Coche>();
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n}, {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n} ]";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
-                        : default(List<Coche>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            for (int i = 0; i < listaCoches.Count; i++)
+            {
+                if (listaCoches[i].Disponible.Value)
+                {
+                    filtradoCoches.Add(listaCoches[i]);
+                }
+            }
+            coches = filtradoCoches;
+
+            string exampleJson = "[";
+            string disp = "";
+            for (int i = 0; i < filtradoCoches.Count; i++)
+            {
+                if (filtradoCoches[i].Disponible.Value)
+                {
+                    disp = "true";
+                }
+                else
+                {
+                    disp = "false";
+                }
+                exampleJson += " {\n  \"marca\" : \"" + filtradoCoches[i].Marca.ToString() + "\",\n  \"puntuacion\" : " + filtradoCoches[i].Puntuacion.ToString() + ",\n  \"num_puertas\" : " + filtradoCoches[i].NumPuertas.ToString() + ",\n  \"numPlazas\" : " + filtradoCoches[i].NumPlazas.ToString() + ",\n  \"lugar\" : \"" + filtradoCoches[i].Lugar.ToString() + "\",\n  \"id\" : " + filtradoCoches[i].Id.ToString() + ",\n  \"precio_Dia\" : " + filtradoCoches[i].PrecioDia.ToString() + ",\n  \"modelo\" : \"" + filtradoCoches[i].Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+                if (i != (filtradoCoches.Count - 1))
+                {
+                    exampleJson += ", ";
+                }
+            }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                : default(List<Coche>);
+            con.Close();
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
+
+            return new ObjectResult(exampleJson) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -95,19 +142,125 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ComprobarFechaLugarCocheFechaInFechaOutLugarPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Coche>), description: "Coches con las características")]
         public virtual IActionResult ComprobarFechaLugarCocheFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Coche>));
+        {
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n}, {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n} ]";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
-                        : default(List<Coche>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            con.Open();
+            MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaCoche MODIFY fechaInicio date", con);
+            cmdClave1.ExecuteReader();
+            con.Close();
+
+            con.Open();
+            MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaCoche MODIFY fechaFin date", con);
+            cmdClave3.ExecuteReader();
+            con.Close();
+
+            DateTime fecha1 = DateTime.ParseExact(fechaIn, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime fecha2 = DateTime.ParseExact(fechaOut, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+
+            // INTRODUCIR FECHAS EN FORMATO 2022-04-28
+            con.Open();
+            MySqlCommand cmdClave = new MySqlCommand("select codigoCoche from reservaCoche  where reservaCoche.fechaInicio >= @fecha1 AND reservaCoche.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
+            cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
+            cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
+            MySqlDataReader reader = cmdClave.ExecuteReader();
+
+            int codigoH = 0;
+            List<int> codigosCoches = new List<int>();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    codigoH = reader.GetInt32("codigoCoche");
+                    codigosCoches.Add(codigoH);
+                }
+
+                con.Close();
+            }
+            else
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
+
+            string exampleJson = "[";
+            List<Coche> leidos = new List<Coche>();
+            Console.WriteLine(codigosCoches.Count);
+            foreach (int codigoCoche in codigosCoches)
+            {
+                con.Open();
+                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from coche where id NOT IN (@id) and lugar=@lugar", con);
+                cmdClave5.Parameters.AddWithValue("@id", codigoCoche);
+                cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                var readerContar = cmdClave5.ExecuteScalar();
+                con.Close();
+                con.Open();
+                MySqlCommand cmdClave2 = new MySqlCommand("select * from coche where id NOT IN (@id) and lugar=@lugar", con);
+                cmdClave2.Parameters.AddWithValue("@id", codigoCoche);
+                cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                var contador = 1;
+                string disp = "";
+
+                while (reader2.Read())
+                {
+                    Coche coche = new Coche();
+                    coche.Id = reader2.GetInt32("id");
+                    coche.Marca = reader2.GetString("marca");
+                    coche.Modelo = reader2.GetString("modelo");
+                    coche.NumPuertas = reader2.GetInt32("num_puertas");
+                    coche.Puntuacion = reader2.GetInt32("puntuacion");
+                    coche.PrecioDia = reader2.GetInt32("precio_Dia");
+                    coche.NumPlazas = reader2.GetInt32("numPlazas");
+                    if (reader2.GetBoolean("disponible"))
+                    {
+                        disp = "true";
+                    }
+                    else
+                    {
+                        disp = "false";
+                    }
+
+                    coche.Lugar = reader2.GetString("lugar");
+                    coche.Disponible = reader2.GetBoolean("disponible");
+                    bool repetido = false;
+                    for (int i = 0; i < leidos.Count; i++)
+                    {
+                        if (leidos[i].Id == coche.Id)
+                        {
+                            repetido = true;
+                        }
+                    }
+                    if (!repetido)
+                    {
+                        leidos.Add(coche);
+                        exampleJson += " {\n  \"marca\" : \"" + coche.Marca.ToString() + "\",\n  \"puntuacion\" : " + coche.Puntuacion.ToString() + ",\n  \"num_puertas\" : " + coche.NumPuertas.ToString() + ",\n  \"numPlazas\" : " + coche.NumPlazas.ToString() + ",\n  \"lugar\" : \"" + coche.Lugar.ToString() + "\",\n  \"id\" : " + coche.Id.ToString() + ",\n  \"precio_Dia\" : " + coche.PrecioDia.ToString() + ",\n  \"modelo\" : \"" + coche.Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+                        if (!(contador).ToString().Equals(readerContar.ToString()))
+                        {
+                            exampleJson += ", ";
+                        }
+                        contador++;
+                    }
+                }
+                con.Close();
+            }
+
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                : default(List<Coche>);
+
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
+            else
+            {
+                coches = JsonConvert.DeserializeObject<List<Coche>>(exampleJson);
+                Console.WriteLine(exampleJson);
+                return new ObjectResult(exampleJson) { StatusCode = 200 };
+            }
         }
 
         /// <summary>
@@ -122,20 +275,51 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarPersonasCocheNPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Coche>), description: "Coches con las características")]
-        public virtual IActionResult ComprobarPersonasCocheNPost([FromRoute][Required]int? n, [FromQuery][Required()]List<Coche> listaCoches)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Coche>));
+        public virtual IActionResult ComprobarPersonasCocheNPost([FromRoute][Required]int? n, [FromBody][Required()]List<Coche> listaCoches)
+        {
+            List<Coche> filtradoCoches = new List<Coche>();
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n}, {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n} ]";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
-                        : default(List<Coche>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            for (int i = 0; i < listaCoches.Count; i++)
+            {
+                if (listaCoches[i].NumPlazas == n)
+                {
+                    filtradoCoches.Add(listaCoches[i]);
+                }
+            }
+            coches = filtradoCoches;
+
+            string exampleJson = "[";
+            string disp = "";
+            for (int i = 0; i < filtradoCoches.Count; i++)
+            {
+                if (filtradoCoches[i].Disponible.Value)
+                {
+                    disp = "true";
+                }
+                else
+                {
+                    disp = "false";
+                }
+                exampleJson += " {\n  \"marca\" : \"" + filtradoCoches[i].Marca.ToString() + "\",\n  \"puntuacion\" : " + filtradoCoches[i].Puntuacion.ToString() + ",\n  \"num_puertas\" : " + filtradoCoches[i].NumPuertas.ToString() + ",\n  \"numPlazas\" : " + filtradoCoches[i].NumPlazas.ToString() + ",\n  \"lugar\" : \"" + filtradoCoches[i].Lugar.ToString() + "\",\n  \"id\" : " + filtradoCoches[i].Id.ToString() + ",\n  \"precio_Dia\" : " + filtradoCoches[i].PrecioDia.ToString() + ",\n  \"modelo\" : \"" + filtradoCoches[i].Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+                    if (i != (filtradoCoches.Count - 1))
+                {
+                    exampleJson += ", ";
+                }
+            }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                : default(List<Coche>);
+            con.Close();
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
+
+            return new ObjectResult(exampleJson) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -151,20 +335,51 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarPreciosCochePrecioInicioPrecioFinPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Coche>), description: "Coches con las características")]
-        public virtual IActionResult ComprobarPreciosCochePrecioInicioPrecioFinPost([FromRoute][Required]decimal? precioInicio, [FromRoute][Required]decimal? precioFin, [FromQuery][Required()]List<Coche> listaCoches)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Coche>));
+        public virtual IActionResult ComprobarPreciosCochePrecioInicioPrecioFinPost([FromRoute][Required]decimal? precioInicio, [FromRoute][Required]decimal? precioFin, [FromBody][Required()]List<Coche> listaCoches)
+        {
+            List<Coche> filtradoCoches = new List<Coche>();
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n}, {\n  \"marca\" : \"Mercedes\",\n  \"puntuacion\" : 5,\n  \"num_puertas\" : 5,\n  \"numPlazas\" : 5,\n  \"lugar\" : \"Murcia\",\n  \"id\" : 1,\n  \"precio_Dia\" : 20,\n  \"modelo\" : \"modelo\",\n  \"disponible\" : true\n} ]";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
-                        : default(List<Coche>);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            for (int i = 0; i < listaCoches.Count; i++)
+            {
+                if (listaCoches[i].PrecioDia <= precioFin && listaCoches[i].PrecioDia >= precioInicio)
+                {
+                    filtradoCoches.Add(listaCoches[i]);
+                }
+            }
+            coches = filtradoCoches;
+
+            string exampleJson = "[";
+            string disp = "";
+            for (int i = 0; i < filtradoCoches.Count; i++)
+            {
+                if (filtradoCoches[i].Disponible.Value)
+                {
+                    disp = "true";
+                }
+                else
+                {
+                    disp = "false";
+                }
+                exampleJson += " {\n  \"marca\" : \"" + filtradoCoches[i].Marca.ToString() + "\",\n  \"puntuacion\" : " + filtradoCoches[i].Puntuacion.ToString() + ",\n  \"num_puertas\" : " + filtradoCoches[i].NumPuertas.ToString() + ",\n  \"numPlazas\" : " + filtradoCoches[i].NumPlazas.ToString() + ",\n  \"lugar\" : \"" + filtradoCoches[i].Lugar.ToString() + "\",\n  \"id\" : " + filtradoCoches[i].Id.ToString() + ",\n  \"precio_Dia\" : " + filtradoCoches[i].PrecioDia.ToString() + ",\n  \"modelo\" : \"" + filtradoCoches[i].Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+                if (i != (filtradoCoches.Count - 1))
+                {
+                    exampleJson += ", ";
+                }
+            }
+            exampleJson += " ]";
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                : default(List<Coche>);
+            con.Close();
+            if (exampleJson == null)
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
+
+            return new ObjectResult(exampleJson) { StatusCode = 200 };
         }
 
         /// <summary>
@@ -204,19 +419,39 @@ namespace IO.Swagger.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(ReservaCoche), description: "Reserva del coche se devuelve")]
         [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse4001), description: "No existe la reserva del coche")]
         public virtual IActionResult ReservaCochesConsultarIdGet([FromRoute][Required]int? id)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(ReservaCoche));
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(InlineResponse4001));
+        {
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
             string exampleJson = null;
-            exampleJson = "{\n  \"codigoCoche\" : \"codigoCoche\",\n  \"fechaInicio\" : \"fechaInicio\",\n  \"dniCliente\" : \"dniCliente\",\n  \"precioTotal\" : 6.027456183070403,\n  \"fechaFin\" : \"fechaFin\",\n  \"idReserva\" : 0\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<ReservaCoche>(exampleJson)
-                        : default(ReservaCoche);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            if (id != null)
+            {
+                MySqlCommand cmdClave = new MySqlCommand("select * from reservaCoche where idReserva=@id", con);
+                cmdClave.Parameters.AddWithValue("@id", id);
+                MySqlDataReader reader = cmdClave.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    int idReserva = reader.GetInt32("idReserva");
+                    int idCoche = reader.GetInt32("codigoCoche");
+                    string dni = reader.GetString("dniCliente");
+                    double precioTotal = reader.GetDouble("precioTotal");
+                    string fechaInicio = reader.GetString("fechaInicio");
+                    string fechaFin = reader.GetString("fechaFin");
+                    con.Close();
+
+                    exampleJson = "{\n  \"fechaInicio\" : \"" + fechaInicio + "\",\n  \"dniCliente\" : \"" + dni + "\",\n  \"precioTotal\" : " + precioTotal.ToString() + ",\n  \"codigoCoche\" : \"" + idCoche.ToString() + "\",\n  \"fechaFin\" : \"" + fechaFin + "\",\n  \"idReserva\" : " + id.ToString() + "\n}";
+                }
+
+                var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<ReservaCoche>(exampleJson)
+                : default(ReservaCoche);            //TODO: Change the data returned
+                return new ObjectResult(example);
+            }
+            else
+            {
+                return new ObjectResult("ERROR 400: NO EXISTE LA RESERVA") { StatusCode = 400 };
+            }
         }
 
         /// <summary>
@@ -257,18 +492,49 @@ namespace IO.Swagger.Controllers
         [SwaggerOperation("ReservaCochesNuevoPost")]
         [SwaggerResponse(statusCode: 400, type: typeof(InlineResponse400), description: "No existe ese coche")]
         [SwaggerResponse(statusCode: 409, type: typeof(InlineResponse409), description: "Esa reserva ya existe")]
-        public virtual IActionResult ReservaCochesNuevoPost([FromQuery][Required()]int? idCoche, [FromBody]ReservaCoche body)
-        { 
-            //TODO: Uncomment the next line to return response 201 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(201);
+        public virtual IActionResult ReservaCochesNuevoPost([FromQuery][Required()]int? idCoche, [FromQuery][Required()] string dniCliente, [FromQuery][Required()] string fechaIn, [FromQuery][Required()] string fechaOut)
+        {
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.Open();
+            if (idCoche != null)
+            {
+                MySqlCommand cmdClave = new MySqlCommand("select * from coche where id=@idCoche", con);
+                cmdClave.Parameters.AddWithValue("@idCoche", idCoche);
+                MySqlDataReader reader = cmdClave.ExecuteReader();
 
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(InlineResponse400));
 
-            //TODO: Uncomment the next line to return response 409 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(409, default(InlineResponse409));
+                if (reader.Read())
+                {
+                    double precioDia = reader.GetDouble("precio_Dia");
+                    double precioTotal = 0;
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaCoche MODIFY fechaInicio date", con);
+                    cmdClave1.ExecuteReader();
+                    con.Close();
 
-            throw new NotImplementedException();
+                    con.Open();
+                    MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaCoche MODIFY fechaFin date", con);
+                    cmdClave3.ExecuteReader();
+                    con.Close();
+                    DateTime fecha1 = DateTime.ParseExact(fechaIn, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    DateTime fecha2 = DateTime.ParseExact(fechaOut, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    int totalDias = (fecha2 - fecha1).Days;
+                    precioTotal = totalDias * precioDia;
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("insert into  reservaCoche (codigoCoche,dniCliente,precioTotal,fechaInicio,fechaFin )values ('" + idCoche + "','" + dniCliente + "','" + precioTotal + "','" + fechaIn + "','" + fechaOut + "')", con);
+
+                    cmdClave2.ExecuteNonQuery();
+                    con.Close();
+                }
+                return new ObjectResult("RESERVA CONFIRMADA") { StatusCode = 201 };
+
+            }
+            else
+            {
+                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+            }
         }
     }
 }
