@@ -69,16 +69,10 @@ namespace IO.Swagger.Controllers
             exampleJson += " {\n  \"precio\" : " + mejorBillete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + mejorBillete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + mejorBillete.Lugar + ",\n  \"name\" : \"" + mejorBillete.Name + "\",\n  \"name\" : \"" + mejorBillete.NumeroPersonas + "\",\n  \"description\" : \"" + mejorBillete.Description.ToString() + "\",\n  \"id\" : " + mejorBillete.Id.ToString() + " \n}";
 
             var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<Hotel>(exampleJson)
-            : default(Hotel);            //TODO: Change the data returned
+            ? JsonConvert.DeserializeObject<Billete>(exampleJson)
+            : default(Billete);            //TODO: Change the data returned
             return new ObjectResult(example);
-            string exampleJson = null;
-            exampleJson = "{\n  \"precio\" : 129.96,\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"lugar\" : \"Mallorca\",\n  \"name\" : \"Vueling\",\n  \"description\" : \"Billete a Mallorca\",\n  \"id\" : 1\n}";
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Billete>(exampleJson)
-                        : default(Billete);            //TODO: Change the data returned
-            return new ObjectResult(example);
         }
 
         /// <summary>
@@ -159,20 +153,207 @@ namespace IO.Swagger.Controllers
         [ValidateModelState]
         [SwaggerOperation("ComprobarFechaLugarBilleteFechaInFechaOutLugarInLugarOutPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Billete>), description: "Billetes con las características")]
-        public virtual IActionResult ComprobarFechaLugarBilleteFechaInFechaOutLugarInLugarOutPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugarIn, [FromRoute][Required]string lugarOut)
-        { 
+        public virtual IActionResult ComprobarFechaLugarBilleteFechaInFechaOutLugarInLugarOutPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
+        {
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Billete>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"precio\" : 129.96,\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"lugar\" : \"Mallorca\",\n  \"name\" : \"Vueling\",\n  \"description\" : \"Billete a Mallorca\",\n  \"id\" : 1\n}, {\n  \"precio\" : 129.96,\n  \"numeroPersonas\" : 2,\n  \"disponibilidad\" : true,\n  \"lugar\" : \"Mallorca\",\n  \"name\" : \"Vueling\",\n  \"description\" : \"Billete a Mallorca\",\n  \"id\" : 1\n} ]";
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+
+            con.Open();
+            MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaBillete MODIFY fechaInicio date", con);
+            cmdClave1.ExecuteReader();
+            con.Close();
+
+            con.Open();
+            MySqlCommand cmdClave3 = new MySqlCommand("ALTER TABLE reservaBillete MODIFY fechaFin date", con);
+            cmdClave3.ExecuteReader();
+            con.Close();
+
+            DateTime fecha1 = DateTime.ParseExact(fechaIn, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime fecha2 = DateTime.ParseExact(fechaOut, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+
+            // INTRODUCIR FECHAS EN FORMATO 2022-04-28
+            con.Open();
+            MySqlCommand cmdClave = new MySqlCommand("select codigoBillete from reservaBillete  where reservaBillete.fechaInicio >= @fecha1 AND reservaBillete.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
+            cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
+            cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
+            MySqlDataReader reader = cmdClave.ExecuteReader();
+
+            int codigoB = 0;
+            List<int> codigosBilletes = new List<int>();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    codigoB = reader.GetInt32("codigoBillete");
+                    codigosBilletes.Add(codigoB);
+                }
+
+                con.Close();
+            }
+
+            if (codigosBilletes.Count == 0)      //si no hay ninguna reserva entre esas fechas
+            {
+                string exampleJson = "[";
+                List<Billete> leidos = new List<Billete>();
+                con.Close();
+                con.Open();
+                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from billete where lugar=@lugar", con);
+                cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                var readerContar = cmdClave5.ExecuteScalar();
+                con.Close();
+                con.Open();
+                MySqlCommand cmdClave2 = new MySqlCommand("select count(*) from billete where lugar=@lugar", con);
+                cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                var contador = 1;
+                string disp = "";
+                
+               
+                while (reader2.Read())
+                {
+                    Billete billete = new Billete();
+                    billete.Id = reader2.GetInt32("id");
+                    billete.Name = reader2.GetString("name");
+                    billete.Description = reader2.GetString("description");
+                    billete.Precio = Convert.ToDecimal(reader2.GetDouble("precio"));
+                    billete.NumeroPersonas = reader2.GetInt32("numeroPersonas");
+                   
+                    if (reader2.GetBoolean("disponibilidad"))
+                    {
+                        disp = "true";
+                    }
+                    else
+                    {
+                        disp = "false";
+                    }
+
+                    billete.Lugar = reader2.GetString("lugar");
+                    billete.Disponibilidad = reader2.GetBoolean("disponibilidad");
+                    bool repetido = false;
+                    for (int i = 0; i < leidos.Count; i++)
+                    {
+                        if (leidos[i].Id == billete.Id)
+                        {
+                            repetido = true;
+                        }
+                    }
+                    if (!repetido)
+                    {
+                        leidos.Add(billete);
+                        exampleJson += " {\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + billete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + billete.Lugar + ",\n  \"name\" : \"" + billete.Name + "\",\n  \"name\" : \"" + billete.NumeroPersonas + "\",\n  \"description\" : \"" + billete.Description.ToString() + "\",\n  \"id\" : " + billete.Id.ToString() + " \n}";
+                        if (!(contador).ToString().Equals(readerContar.ToString()))
+                        {
+                            exampleJson += ", ";
+                        }
+                        contador++;
+                    }
+                }
+                con.Close();
+
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Billete>>(exampleJson)
+                    : default(List<Billete>);
+
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN BILLETES") { StatusCode = 400 };
+                }
+                else
+                {
+                    billetes = JsonConvert.DeserializeObject<List<Billete>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
+
+            }
+            else    //si hay alguna reserva entre esas fechas
+            {
+                string exampleJson = "[";
+                List<Billete> leidos = new List<Billete>();
+               
+                foreach (int codigoHotel in codigosBilletes)
+                {
+                    con.Open();
+                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave5.Parameters.AddWithValue("@id", codigoHotel);
+                    cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                    var readerContar = cmdClave5.ExecuteScalar();
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugarIn=@lugar and lugarOut=@lugar", con);
+                    cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
+                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                    var contador = 1;
+                    string disp = "";
+
+                    while (reader2.Read())
+                    {
+                        Billete billete = new Billete();
+                        billete.Id = reader2.GetInt32("id");
+                        billete.Name = reader2.GetString("name");
+                        billete.Description = reader2.GetString("description");
+                        billete.Precio = Convert.ToDecimal(reader2.GetDouble("precio"));
+                        billete.NumeroPersonas = reader2.GetInt32("numeroPersonas");
+                        if (reader2.GetBoolean("disponibilidad"))
+                        {
+                            disp = "true";
+                        }
+                        else
+                        {
+                            disp = "false";
+                        }
+
+                        billete.Lugar = reader2.GetString("lugar");
+                        billete.Disponibilidad = reader2.GetBoolean("disponibilidad");
+                        bool repetido = false;
+                        for (int i = 0; i < leidos.Count; i++)
+                        {
+                            if (leidos[i].Id == billete.Id)
+                            {
+                                repetido = true;
+                            }
+                        }
+                        if (!repetido)
+                        {
+                            leidos.Add(billete);
+                            exampleJson += " {\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + billete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + billete.Lugar + ",\n  \"name\" : \"" + billete.Name + "\",\n  \"name\" : \"" + billete.NumeroPersonas + "\",\n  \"description\" : \"" + billete.Description.ToString() + "\",\n  \"id\" : " + billete.Id.ToString() + " \n}";
+                            if (!(contador).ToString().Equals(readerContar.ToString()))
+                            {
+                                exampleJson += ", ";
+                            }
+                            contador++;
+                        }
+                    }
+                    con.Close();
+                }
+
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                    : default(List<Hotel>);
+
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                }
+                else
+                {
+                    billetes = JsonConvert.DeserializeObject<List<Billete>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
+            }
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Billete>>(exampleJson)
-                        : default(List<Billete>);            //TODO: Change the data returned
-            return new ObjectResult(example);
         }
 
         /// <summary>
@@ -228,12 +409,12 @@ namespace IO.Swagger.Controllers
             }
             exampleJson += " ]";
             var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                : default(List<Hotel>);
+                ? JsonConvert.DeserializeObject<List<Billete>>(exampleJson)
+                : default(List<Billete>);
             con.Close();
             if (exampleJson == null)
             {
-                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                return new ObjectResult("ERROR 400: NO EXISTEN BILLETES") { StatusCode = 400 };
             }
 
             return new ObjectResult(exampleJson) { StatusCode = 200 };
@@ -294,12 +475,12 @@ namespace IO.Swagger.Controllers
             }
             exampleJson += " ]";
             var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                : default(List<Hotel>);
+                ? JsonConvert.DeserializeObject<List<Billete>>(exampleJson)
+                : default(List<Billete>);
             con.Close();
             if (exampleJson == null)
             {
-                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                return new ObjectResult("ERROR 400: NO EXISTEN BILLETE") { StatusCode = 400 };
             }
 
             return new ObjectResult(exampleJson) { StatusCode = 200 };
@@ -373,8 +554,8 @@ namespace IO.Swagger.Controllers
                 }
 
                 var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<ReservaHotel>(exampleJson)
-                : default(ReservaHotel);            //TODO: Change the data returned
+                ? JsonConvert.DeserializeObject<ReservaBillete>(exampleJson)
+                : default(ReservaBillete);            //TODO: Change the data returned
                 return new ObjectResult(example);
             }
             else
