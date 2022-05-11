@@ -278,17 +278,17 @@ namespace IO.Swagger.Controllers
                 string exampleJson = "[";
                 List<Billete> leidos = new List<Billete>();
                
-                foreach (int codigoHotel in codigosBilletes)
+                foreach (int codigoBillete in codigosBilletes)
                 {
                     con.Open();
-                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where id NOT IN (@id) and lugar=@lugar", con);
-                    cmdClave5.Parameters.AddWithValue("@id", codigoHotel);
+                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from billete where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave5.Parameters.AddWithValue("@id", codigoBillete);
                     cmdClave5.Parameters.AddWithValue("@lugar", lugar);
                     var readerContar = cmdClave5.ExecuteScalar();
                     con.Close();
                     con.Open();
-                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugarIn=@lugar and lugarOut=@lugar", con);
-                    cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from billete where id NOT IN (@id) and lugarIn=@lugar and lugarOut=@lugar", con);
+                    cmdClave2.Parameters.AddWithValue("@id", codigoBillete);
                     cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                     cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                     MySqlDataReader reader2 = cmdClave2.ExecuteReader();
@@ -339,12 +339,12 @@ namespace IO.Swagger.Controllers
 
                 exampleJson += " ]";
                 var example = exampleJson != null
-                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                    : default(List<Hotel>);
+                    ? JsonConvert.DeserializeObject<List<Billete>>(exampleJson)
+                    : default(List<Billete>);
 
                 if (exampleJson == null)
                 {
-                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                    return new ObjectResult("ERROR 400: NO EXISTEN BILLETES") { StatusCode = 400 };
                 }
                 else
                 {
