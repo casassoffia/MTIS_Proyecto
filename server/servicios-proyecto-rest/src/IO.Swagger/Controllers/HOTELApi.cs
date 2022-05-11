@@ -139,10 +139,6 @@ namespace IO.Swagger.Controllers
 
                 con.Close();
             }
-            else
-            {
-                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
-            }
 
             string exampleJson = "[";
             List<Hotel> leidos = new List<Hotel>();
@@ -323,7 +319,7 @@ namespace IO.Swagger.Controllers
                 {
                     disp = "false";
                 }
-                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
+                exampleJson += " {\n  \"numeroPersonas\" : " + filtradoHoteles[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + filtradoHoteles[i].Puntuacion.ToString() + ",\n  \"precioNoche\" : " + filtradoHoteles[i].PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + filtradoHoteles[i].Lugar + "\",\n  \"name\" : \"" + filtradoHoteles[i].Name + "\",\n  \"description\" : \"" + filtradoHoteles[i].NumeroPersonas.ToString() + "\",\n  \"id\" : " + filtradoHoteles[i].Id.ToString() + " \n}";
                 if (i != (filtradoHoteles.Count - 1))
                 {
                     exampleJson += ", ";

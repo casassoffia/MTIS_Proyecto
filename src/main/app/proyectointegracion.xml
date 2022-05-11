@@ -19,22 +19,18 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <http:request config-ref="HTTP_Request_Configuration1" path="/validarDatosCliente/#[dw('payload.dni')]" method="GET" doc:name="HTTP"/>
         <logger message="#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" level="INFO" doc:name="Logger"/>
         <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarFechaLugarHotel/#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" method="POST" doc:name="HTTP"/>
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
----
-{
-}]]></dw:set-payload>
-        </dw:transform-message>
-        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarPersonasHotel/#[flowVars.numPersonas]" method="POST" doc:name="HTTP">
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+
+
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarPersonasHotel/#[flowVars.numPersonas]" method="POST" doc:name="HTTP"  >
         </http:request>
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
----
-{
-}]]></dw:set-payload>
-        </dw:transform-message>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+
         <http:request config-ref="HTTP_Request_Configuration1" path="comprobarPreciosHotel/#[flowVars.precioInicio]/#[flowVars.precioFin]" method="POST" doc:name="HTTP"/>
+        <logger message="#[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
