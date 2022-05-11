@@ -105,7 +105,7 @@ namespace IO.Swagger.Controllers
         public virtual IActionResult ComprobarFechaLugarHotelFechaInFechaOutLugarPost([FromRoute][Required]string fechaIn, [FromRoute][Required]string fechaOut, [FromRoute][Required]string lugar)
         {
             MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=root";
+            con.ConnectionString = "server=localhost;user id=root;database=companiarea;Password=ContraseñaParaMTIS";
 
             con.Open();
             MySqlCommand cmdClave1 = new MySqlCommand("ALTER TABLE reservaHotel MODIFY fechaInicio date", con);
@@ -140,82 +140,162 @@ namespace IO.Swagger.Controllers
                 con.Close();
             }
 
-            string exampleJson = "[";
-            List<Hotel> leidos = new List<Hotel>();
-            Console.WriteLine(codigosHoteles.Count);
-            foreach (int codigoHotel in codigosHoteles)
+            if (codigosHoteles.Count == 0)      //si no hay ninguna reserva entre esas fechas
             {
-                con.Open();
-                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where id NOT IN (@id) and lugar=@lugar", con);
-                cmdClave5.Parameters.AddWithValue("@id", codigoHotel);
-                cmdClave5.Parameters.AddWithValue("@lugar", lugar);
-                var readerContar = cmdClave5.ExecuteScalar();
+                string exampleJson = "[";
+                List<Hotel> leidos = new List<Hotel>();
+                Console.WriteLine(codigosHoteles.Count);
                 con.Close();
                 con.Open();
-                MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugar=@lugar", con);
-                cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
-                cmdClave2.Parameters.AddWithValue("@lugar", lugar);
-                MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where lugar=@lugar", con);
+                    cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                    var readerContar = cmdClave5.ExecuteScalar();
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where lugar=@lugar", con);
+                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
 
-                var contador = 1;
-                string disp = "";
+                    var contador = 1;
+                    string disp = "";
 
-                while (reader2.Read())
+                    while (reader2.Read())
+                    {
+                        Hotel hotel = new Hotel();
+                        hotel.Id = reader2.GetInt32("id");
+                        hotel.Name = reader2.GetString("name");
+                        hotel.Description = reader2.GetString("description");
+                        hotel.PrecioNoche = Convert.ToDecimal(reader2.GetDouble("precioNoche"));
+                        hotel.NumeroPersonas = reader2.GetInt32("numeroPersonas");
+                        hotel.Puntuacion = reader2.GetInt32("puntuacion");
+                        if (reader2.GetBoolean("disponibilidad"))
+                        {
+                            disp = "true";
+                        }
+                        else
+                        {
+                            disp = "false";
+                        }
+
+                        hotel.Lugar = reader2.GetString("lugar");
+                        hotel.Disponibilidad = reader2.GetBoolean("disponibilidad");
+                        bool repetido = false;
+                        for (int i = 0; i < leidos.Count; i++)
+                        {
+                            if (leidos[i].Id == hotel.Id)
+                            {
+                                repetido = true;
+                            }
+                        }
+                        if (!repetido)
+                        {
+                            leidos.Add(hotel);
+                            exampleJson += " {\n  \"numeroPersonas\" : " + hotel.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + hotel.Puntuacion.ToString() + ",\n  \"precioNoche\" : " + hotel.PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + hotel.Lugar.ToString() + "\",\n  \"name\" : \"" + hotel.Name.ToString() + "\",\n  \"description\" : \"" + hotel.Description.ToString() + "\",\n  \"id\" : " + hotel.Id.ToString() + " \n}";
+                            if (!(contador).ToString().Equals(readerContar.ToString()))
+                            {
+                                exampleJson += ", ";
+                            }
+                            contador++;
+                        }
+                    }
+                    con.Close();
+
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                    : default(List<Hotel>);
+
+                if (exampleJson == null)
                 {
-                    Hotel hotel = new Hotel();
-                    hotel.Id = reader2.GetInt32("id");
-                    hotel.Name = reader2.GetString("name");
-                    hotel.Description = reader2.GetString("description");
-                    hotel.PrecioNoche = Convert.ToDecimal(reader2.GetDouble("precioNoche"));
-                    hotel.NumeroPersonas = reader2.GetInt32("numeroPersonas");
-                    hotel.Puntuacion = reader2.GetInt32("puntuacion");
-                    if (reader2.GetBoolean("disponibilidad"))
-                    {
-                        disp = "true";
-                    }
-                    else
-                    {
-                        disp = "false";
-                    }
-
-                    hotel.Lugar = reader2.GetString("lugar");
-                    hotel.Disponibilidad = reader2.GetBoolean("disponibilidad");
-                    bool repetido = false;
-                    for (int i = 0; i < leidos.Count; i++)
-                    {
-                        if (leidos[i].Id == hotel.Id)
-                        {
-                            repetido = true;
-                        }
-                    }
-                    if (!repetido)
-                    {
-                        leidos.Add(hotel);
-                        exampleJson += " {\n  \"numeroPersonas\" : " + hotel.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + hotel.Puntuacion.ToString() + ",\n  \"precioNoche\" : " + hotel.PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + hotel.Lugar.ToString() + "\",\n  \"name\" : \"" + hotel.Name.ToString() + "\",\n  \"description\" : \"" + hotel.Description.ToString() + "\",\n  \"id\" : " + hotel.Id.ToString() + " \n}";
-                        if (!(contador).ToString().Equals(readerContar.ToString()))
-                        {
-                            exampleJson += ", ";
-                        }
-                        contador++;
-                    }
+                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
                 }
-                con.Close();
+                else
+                {
+                    hoteles = JsonConvert.DeserializeObject<List<Hotel>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
+                
             }
-
-            exampleJson += " ]";
-            var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
-                : default(List<Hotel>);
-
-            if (exampleJson == null)
+            else    //si hay alguna reserva entre esas fechas
             {
-                return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
-            }
-            else
-            {
-                hoteles = JsonConvert.DeserializeObject<List<Hotel>>(exampleJson);
-                Console.WriteLine(exampleJson);
-                return new ObjectResult(exampleJson) { StatusCode = 200 };
+                string exampleJson = "[";
+                List<Hotel> leidos = new List<Hotel>();
+                Console.WriteLine(codigosHoteles.Count);
+                foreach (int codigoHotel in codigosHoteles)
+                {
+                    con.Open();
+                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from hotel where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave5.Parameters.AddWithValue("@id", codigoHotel);
+                    cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                    var readerContar = cmdClave5.ExecuteScalar();
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from hotel where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave2.Parameters.AddWithValue("@id", codigoHotel);
+                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                    var contador = 1;
+                    string disp = "";
+
+                    while (reader2.Read())
+                    {
+                        Hotel hotel = new Hotel();
+                        hotel.Id = reader2.GetInt32("id");
+                        hotel.Name = reader2.GetString("name");
+                        hotel.Description = reader2.GetString("description");
+                        hotel.PrecioNoche = Convert.ToDecimal(reader2.GetDouble("precioNoche"));
+                        hotel.NumeroPersonas = reader2.GetInt32("numeroPersonas");
+                        hotel.Puntuacion = reader2.GetInt32("puntuacion");
+                        if (reader2.GetBoolean("disponibilidad"))
+                        {
+                            disp = "true";
+                        }
+                        else
+                        {
+                            disp = "false";
+                        }
+
+                        hotel.Lugar = reader2.GetString("lugar");
+                        hotel.Disponibilidad = reader2.GetBoolean("disponibilidad");
+                        bool repetido = false;
+                        for (int i = 0; i < leidos.Count; i++)
+                        {
+                            if (leidos[i].Id == hotel.Id)
+                            {
+                                repetido = true;
+                            }
+                        }
+                        if (!repetido)
+                        {
+                            leidos.Add(hotel);
+                            exampleJson += " {\n  \"numeroPersonas\" : " + hotel.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"puntuacion\" : " + hotel.Puntuacion.ToString() + ",\n  \"precioNoche\" : " + hotel.PrecioNoche.ToString() + ",\n  \"lugar\" : \"" + hotel.Lugar.ToString() + "\",\n  \"name\" : \"" + hotel.Name.ToString() + "\",\n  \"description\" : \"" + hotel.Description.ToString() + "\",\n  \"id\" : " + hotel.Id.ToString() + " \n}";
+                            if (!(contador).ToString().Equals(readerContar.ToString()))
+                            {
+                                exampleJson += ", ";
+                            }
+                            contador++;
+                        }
+                    }
+                    con.Close();
+                }
+
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Hotel>>(exampleJson)
+                    : default(List<Hotel>);
+
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN HOTELES") { StatusCode = 400 };
+                }
+                else
+                {
+                    hoteles = JsonConvert.DeserializeObject<List<Hotel>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
             }
         }
 
