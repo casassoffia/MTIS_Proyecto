@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8082" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="50353" doc:name="HTTP Request Configuration" basePath="/futratioiw/ComprobarHotel/1.0.0"/>
+    <http:request-config name="HTTP_Request_Configuration1" host="localhost" port="50352" basePath="/aditwitter20212022/proyecto/1.0.0" doc:name="HTTP Request Configuration"/>
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="root" database="companiarea" doc:name="MySQL Configuration"/>
+    <smtp:gmail-connector name="Gmail" contentType="text/plain" fromAddress="ys37.csharp@gmail.com" validateConnections="true" doc:name="Gmail"/>
+    <flow name="proyectoIntegracionCoche">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+        <logger message="#[dw('payload.dni')]" level="INFO" doc:name="Logger"/>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.cliente= dw('payload.dni');flowVars.fechaInicio= dw('payload.fechaInicio');flowVars.fechaFin=dw('payload.fechaFin');flowVars.lugar=dw('payload.lugar');flowVars.numPersonas=dw('payload.numPersonas');flowVars.precioInicio=dw('payload.precioInicio');flowVars.precioFin=dw('payload.precioFin')]]></expression-component>
+        <db:select config-ref="MySQL_Configuration" doc:name="Select email">
+            <db:parameterized-query><![CDATA[SELECT email
+FROM cliente
+WHERE dni = #[flowVars.cliente]]]></db:parameterized-query>
+        </db:select>
+        <set-variable variableName="email" value="#[payload.get(0).email]" doc:name="Variable email"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/validarDatosCliente/#[flowVars.cliente]" method="GET" doc:name="Validar Cliente"/>
+        <logger message="#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarFechaLugarCoche/#[flowVars.fechaInicio]/#[flowVars.fechaFin]/#[flowVars.lugar]" method="POST" doc:name="Filtro fecha y lugar"/>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+
+
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarPersonasCoche/#[flowVars.numPersonas]" method="POST" doc:name="Filtro n&#250;mero de personas"  >
+        </http:request>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarPreciosCoche/#[flowVars.precioInicio]/#[flowVars.precioFin]" method="POST" doc:name="Filtro precios"/>
+        <logger message="#[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/comprobarDisponibilidadCoche" method="POST" doc:name="Filtro disponibilidad"/>
+        <logger level="INFO" doc:name="Logger" message="#[message.payloadAs(java.lang.String)]"/>
+        <expression-component doc:name="Expression"><![CDATA[flowVars.lista = message.payloadAs(java.lang.String)]]></expression-component>
+        <set-payload value="#[flowVars.lista]" doc:name="Set Payload"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/coches" method="POST" doc:name="Coche mejor puntuaci&#243;n"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%var myObject = payload
+%output application/java
+---
+myObject]]></dw:set-payload>
+        </dw:transform-message>
+        <set-variable variableName="idMejorCoche" value="#[payload.id]" doc:name="Variable id del mejor coche"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/reserva/coches/nuevo?idCoche=#[flowVars.idMejorCoche]&amp;dniCliente=#[flowVars.cliente]&amp;fechaIn=#[flowVars.fechaInicio]&amp;fechaOut=#[flowVars.fechaFin]" method="POST" doc:name="Reservar coche"/>
+        <db:select config-ref="MySQL_Configuration" doc:name="Select reserva">
+            <db:parameterized-query><![CDATA[SELECT count(*), idReserva 
+FROM reservaCoche
+WHERE codigoCoche = #[flowVars.idMejorCoche] AND dniCliente = #[flowVars.cliente] AND fechaInicio = #[flowVars.fechaInicio]  AND fechaFin = #[flowVars.fechaFin]]]></db:parameterized-query>
+        </db:select>
+        <set-variable variableName="contador" value="#[payload.get(0).'count(*)']" doc:name="Variable contador"/>
+        <choice doc:name="&#191;Realizado con &#233;xito?">
+            <when expression="#[flowVars['contador'] &gt; 0]">
+                <http:request config-ref="HTTP_Request_Configuration1" path="/reserva/coches/consultar/#[payload.get(0).idReserva]" method="GET" doc:name="HTTP"/>
+                <set-payload value="#[message.payloadAs(java.lang.String)]" doc:name="Cuerpo del mensaje"/>
+                <smtp:outbound-endpoint host="smtp.gmail.com" port="587" user="ys37.csharp@gmail.com" password="root1234root" connector-ref="Gmail" to="#[flowVars.email]" from="ys37.csharp@gmail.com" subject="DETALLES DE LA RESERVA DE COCHE" responseTimeout="10000" doc:name="Enviar correo de reserva"/>
+            </when>
+            <otherwise>
+                <set-payload value="NO SE HA PODIDO REALIZAR LA RESERVA" doc:name="ERROR"/>
+            </otherwise>
+        </choice>
+    </flow>
+</mule>
