@@ -122,7 +122,8 @@ namespace IO.Swagger.Controllers
 
             // INTRODUCIR FECHAS EN FORMATO 2022-04-28
             con.Open();
-            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel  where reservaHotel.fechaInicio >= @fecha1 AND reservaHotel.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
+            //select *from reservaHotel where (fechaInicio>= '2022-11-22' and fechaFin<= '2022-11-26') or (fechaInicio>= '2022-11-22' and fechaInicio<='2022-11-28') or (fechaFin>= '2022-11-22' and fechaFin<= '2022-11-28');
+            MySqlCommand cmdClave = new MySqlCommand("select codigoHotel from reservaHotel  where (reservaHotel.fechaInicio >= @fecha1 AND reservaHotel.fechaFin <= @fecha2) or (fechaInicio >= @fecha1 and fechaInicio <= @fecha2) or (fechaFin >= @fecha1 and fechaFin <= @fecha2);", con); //cogemos los que no están disponibles
             cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
             cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
            MySqlDataReader reader = cmdClave.ExecuteReader();
