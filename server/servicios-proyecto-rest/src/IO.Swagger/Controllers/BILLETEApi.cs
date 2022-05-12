@@ -149,7 +149,7 @@ namespace IO.Swagger.Controllers
         /// <response code="200">Billetes con las características</response>
         /// <response code="400">ERROR 400: No hay billetes con esas características</response>
         [HttpPost]
-        [Route("/aditwitter20212022/proyecto/1.0.0/comprobarFechaLugarBillete/{fechaIn}/{fechaOut}/{lugarIn}/{lugarOut}")]
+        [Route("/aditwitter20212022/proyecto/1.0.0/comprobarFechaLugarBillete/{fechaIn}/{fechaOut}/{lugar}")]
         [ValidateModelState]
         [SwaggerOperation("ComprobarFechaLugarBilleteFechaInFechaOutLugarInLugarOutPost")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Billete>), description: "Billetes con las características")]
@@ -178,7 +178,7 @@ namespace IO.Swagger.Controllers
 
             // INTRODUCIR FECHAS EN FORMATO 2022-04-28
             con.Open();
-            MySqlCommand cmdClave = new MySqlCommand("select codigoBillete from reservaBillete  where reservaBillete.fechaInicio >= @fecha1 AND reservaBillete.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
+            MySqlCommand cmdClave = new MySqlCommand("select codigoBillete from reservabillete  where reservaBillete.fechaInicio >= @fecha1 AND reservaBillete.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
             cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
             cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
             MySqlDataReader reader = cmdClave.ExecuteReader();
@@ -207,7 +207,7 @@ namespace IO.Swagger.Controllers
                 var readerContar = cmdClave5.ExecuteScalar();
                 con.Close();
                 con.Open();
-                MySqlCommand cmdClave2 = new MySqlCommand("select count(*) from billete where lugar=@lugar", con);
+                MySqlCommand cmdClave2 = new MySqlCommand("select * from billete where lugar=@lugar", con);
                 cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                 MySqlDataReader reader2 = cmdClave2.ExecuteReader();
 
