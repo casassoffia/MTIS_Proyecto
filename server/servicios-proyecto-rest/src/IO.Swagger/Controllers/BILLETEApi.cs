@@ -30,7 +30,7 @@ namespace IO.Swagger.Controllers
     {
         public List<Billete> billetes = new List<Billete>();
         /// <summary>
-        /// Obtiene el billete con mejor puntuación
+        /// Obtiene el billete con mejor precio
         /// </summary>
         /// <param name="billetes">pasar lista de billetes</param>
         /// <response code="200">Billete con mejor puntuación</response>
@@ -468,7 +468,7 @@ namespace IO.Swagger.Controllers
                 {
                     disp = "false";
                 }
-                exampleJson += " {\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"lugar\" : " + filtradoBilletes[i].Lugar + ",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"name\" : \"" + filtradoBilletes[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" : " + filtradoBilletes[i].Id.ToString() + " \n}";
+                exampleJson += "{\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"numeroPersonas\" :" + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + filtradoBilletes[i].Lugar + "\",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" :" + filtradoBilletes[i].Id.ToString() + "\n}";
                 if (i != (filtradoBilletes.Count - 1))
                 {
                     exampleJson += ", ";
