@@ -66,7 +66,7 @@ namespace IO.Swagger.Controllers
             {
                 disp = "false";
             }
-            exampleJson += " {\n  \"precio\" : " + mejorBillete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + mejorBillete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + mejorBillete.Lugar + ",\n  \"name\" : \"" + mejorBillete.Name + "\",\n  \"name\" : \"" + mejorBillete.NumeroPersonas + "\",\n  \"description\" : \"" + mejorBillete.Description.ToString() + "\",\n  \"id\" : " + mejorBillete.Id.ToString() + " \n}";
+            exampleJson += "{\n  \"precio\" : " + mejorBillete.Precio.ToString() + ",\n  \"numeroPersonas\" :" + mejorBillete.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + mejorBillete.Lugar + "\",\n  \"name\" : \"" + mejorBillete.Name + "\",\n  \"description\" : \"" + mejorBillete.Description.ToString() + "\",\n  \"id\" :" + mejorBillete.Id.ToString() + "\n}";
 
             var example = exampleJson != null
             ? JsonConvert.DeserializeObject<Billete>(exampleJson)
@@ -119,7 +119,7 @@ namespace IO.Swagger.Controllers
                 {
                     disp = "false";
                 }
-                exampleJson += " {\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"lugar\" : " + filtradoBilletes[i].Lugar + ",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"name\" : \"" + filtradoBilletes[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" : " + filtradoBilletes[i].Id.ToString() + " \n}";
+                exampleJson += "{\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"numeroPersonas\" :" + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + filtradoBilletes[i].Lugar + "\",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" :" + filtradoBilletes[i].Id.ToString() + "\n}";
                 if (i != (filtradoBilletes.Count - 1))
                 {
                     exampleJson += ", ";
@@ -246,7 +246,8 @@ namespace IO.Swagger.Controllers
                     if (!repetido)
                     {
                         leidos.Add(billete);
-                        exampleJson += " {\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + billete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + billete.Lugar + ",\n  \"name\" : \"" + billete.Name + "\",\n  \"name\" : \"" + billete.NumeroPersonas + "\",\n  \"description\" : \"" + billete.Description.ToString() + "\",\n  \"id\" : " + billete.Id.ToString() + " \n}";
+                        exampleJson += "{\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"numeroPersonas\" :" + billete.NumeroPersonas.ToString() +",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + billete.Lugar + "\",\n  \"name\" : \""+ billete.Name+"\",\n  \"description\" : \""+ billete.Description.ToString() + "\",\n  \"id\" :" + billete.Id.ToString() + "\n}";
+         
                         if (!(contador).ToString().Equals(readerContar.ToString()))
                         {
                             exampleJson += ", ";
@@ -326,7 +327,7 @@ namespace IO.Swagger.Controllers
                         if (!repetido)
                         {
                             leidos.Add(billete);
-                            exampleJson += " {\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + billete.NumeroPersonas.ToString() + ",\n  \"lugar\" : " + billete.Lugar + ",\n  \"name\" : \"" + billete.Name + "\",\n  \"name\" : \"" + billete.NumeroPersonas + "\",\n  \"description\" : \"" + billete.Description.ToString() + "\",\n  \"id\" : " + billete.Id.ToString() + " \n}";
+                            exampleJson += "{\n  \"precio\" : " + billete.Precio.ToString() + ",\n  \"numeroPersonas\" :" + billete.NumeroPersonas.ToString() + ",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + billete.Lugar + "\",\n  \"name\" : \"" + billete.Name + "\",\n  \"description\" : \"" + billete.Description.ToString() + "\",\n  \"id\" :" + billete.Id.ToString() + "\n}";
                             if (!(contador).ToString().Equals(readerContar.ToString()))
                             {
                                 exampleJson += ", ";
@@ -401,7 +402,7 @@ namespace IO.Swagger.Controllers
                 {
                     disp = "false";
                 }
-                exampleJson += " {\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"disponibilidad\" : " + disp + ",\n  \"numeroPersonas\" : " + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"lugar\" : " + filtradoBilletes[i].Lugar + ",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"name\" : \"" + filtradoBilletes[i].NumeroPersonas + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" : " + filtradoBilletes[i].Id.ToString() + " \n}";
+                exampleJson += "{\n  \"precio\" : " + filtradoBilletes[i].Precio.ToString() + ",\n  \"numeroPersonas\" :" + filtradoBilletes[i].NumeroPersonas.ToString() + ",\n  \"disponibilidad\" :" + disp + ",\n  \"lugar\" : \"" + filtradoBilletes[i].Lugar + "\",\n  \"name\" : \"" + filtradoBilletes[i].Name + "\",\n  \"description\" : \"" + filtradoBilletes[i].Description.ToString() + "\",\n  \"id\" :" + filtradoBilletes[i].Id.ToString() + "\n}";
                 if (i != (filtradoBilletes.Count - 1))
                 {
                     exampleJson += ", ";
