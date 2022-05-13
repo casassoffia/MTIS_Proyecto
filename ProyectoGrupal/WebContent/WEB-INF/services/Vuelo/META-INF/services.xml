@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- This file was auto-generated from WSDL --><!-- by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST) --><serviceGroup>
+    <service name="Vuelo">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.mtis.www.vuelo.VueloMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">org.mtis.www.vuelo.VueloSkeleton</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="asignarAsiento" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Vuelo/">
+            <actionMapping>http://www.mtis.org/Vuelo/asignarAsiento</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Vuelo/Vuelo/asignarAsientoResponse</outputActionMapping>
+        </operation>
+        <operation name="comprobarFechaLugar" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Vuelo/">
+            <actionMapping>http://www.mtis.org/Vuelo/comprobarFechaLugar</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Vuelo/Vuelo/comprobarFechaLugarResponse</outputActionMapping>
+        </operation>
+        <operation name="comprobarDisponibilidad" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Vuelo/">
+            <actionMapping>http://www.mtis.org/Vuelo/comprobarDisponibilidad</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Vuelo/Vuelo/comprobarDisponibilidadResponse</outputActionMapping>
+        </operation>
+        <operation name="eliminarAsiento" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Vuelo/">
+            <actionMapping>http://www.mtis.org/Vuelo/eliminarAsiento</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Vuelo/Vuelo/eliminarAsientoResponse</outputActionMapping>
+        </operation>
+        <operation name="confirmarAsignacion" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Vuelo/">
+            <actionMapping>http://www.mtis.org/Vuelo/confirmarAsignacion</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Vuelo/Vuelo/confirmarAsignacionResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>

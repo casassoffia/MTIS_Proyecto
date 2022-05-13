@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.mtis.org/Validar/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Validar" targetNamespace="http://www.mtis.org/Validar/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.mtis.org/Validar/">
+      <xsd:element name="ValidarCliente">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="DNI" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ValidarClienteResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="valido" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ValidarClienteRequest">
+    <wsdl:part element="tns:ValidarCliente" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ValidarClienteResponse">
+    <wsdl:part element="tns:ValidarClienteResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="Validar">
+    <wsdl:operation name="ValidarCliente">
+      <wsdl:input message="tns:ValidarClienteRequest"/>
+      <wsdl:output message="tns:ValidarClienteResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ValidarSOAP" type="tns:Validar">
+  	<soap:binding style="document"
+  		transport="http://schemas.xmlsoap.org/soap/http" />
+  	<wsdl:operation name="ValidarCliente">
+  		<soap:operation
+  			soapAction="http://www.mtis.org/Validar/ValidarCliente" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Validar">
+    <wsdl:port binding="tns:ValidarSOAP" name="ValidarSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
