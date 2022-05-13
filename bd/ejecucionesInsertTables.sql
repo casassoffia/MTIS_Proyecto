@@ -19,9 +19,9 @@ insert into companiarea.billete values(2,'Billet02','Billete del avion',500,2,8,
 insert into companiarea.billete values(3,'Billet03','Billete del avion',600,3,10,1,'Barcelona');
 insert into companiarea.billete values(4,'Billet04','Billete del avion',230,1,7,1,'Alicante');
 insert into companiarea.billete values(5,'Billet05','Billete del avion',1000,5,8,1,'Valencia');
-insert into companiarea.reservabillete values(1,1,'11111A',250,'2022-10-20','2022-10-30');
-insert into companiarea.reservabillete values(2,2,'22222B',300,'2022-11-22','2022-11-26');
-insert into companiarea.reservabillete values(3,3,'33333C',250,'2022-09-20','2022-09-30');
+insert into companiarea.reservabillete values(1,1,'11111A',250,'2022-10-20','2022-10-30',null);
+insert into companiarea.reservabillete values(2,2,'22222B',300,'2022-11-22','2022-11-26',null);
+insert into companiarea.reservabillete values(3,3,'33333C',250,'2022-09-20','2022-09-30',null);
 insert into companiarea.reservahotel values (1,1,'11111A',160,'2022-10-20','2022-10-30');
 insert into companiarea.reservahotel values (2,2,'22222B',300,'2022-11-22','2022-11-26');
 insert into companiarea.reservacoche values (1,1,'11111A',150,'2022-10-20','2022-10-30');

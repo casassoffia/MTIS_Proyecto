@@ -161,42 +161,38 @@ namespace IO.Swagger.Controllers
 
             // INTRODUCIR FECHAS EN FORMATO 2022-04-28
             con.Open();
-            MySqlCommand cmdClave = new MySqlCommand("select codigoCoche from reservaCoche  where reservaCoche.fechaInicio >= @fecha1 AND reservaCoche.fechaFin <= @fecha2 ", con); //cogemos los que no están disponibles
+            //select *from reservaHotel where (fechaInicio>= '2022-11-22' and fechaFin<= '2022-11-26') or (fechaInicio>= '2022-11-22' and fechaInicio<='2022-11-28') or (fechaFin>= '2022-11-22' and fechaFin<= '2022-11-28');
+            MySqlCommand cmdClave = new MySqlCommand("select codigoCoche from reservaCoche  where (reservaCoche.fechaInicio >= @fecha1 AND reservaCoche.fechaFin <= @fecha2) or (fechaInicio >= @fecha1 and fechaInicio <= @fecha2) or (fechaFin >= @fecha1 and fechaFin <= @fecha2);", con); //cogemos los que no están disponibles
             cmdClave.Parameters.AddWithValue("@fecha1", fecha1);
             cmdClave.Parameters.AddWithValue("@fecha2", fecha2);
             MySqlDataReader reader = cmdClave.ExecuteReader();
 
-            int codigoH = 0;
+            int codigoC = 0;
             List<int> codigosCoches = new List<int>();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    codigoH = reader.GetInt32("codigoCoche");
-                    codigosCoches.Add(codigoH);
+                    codigoC = reader.GetInt32("codigoCoche");
+                    codigosCoches.Add(codigoC);
                 }
 
                 con.Close();
             }
-            else
-            {
-                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
-            }
 
-            string exampleJson = "[";
-            List<Coche> leidos = new List<Coche>();
-            Console.WriteLine(codigosCoches.Count);
-            foreach (int codigoCoche in codigosCoches)
+            if (codigosCoches.Count == 0)      //si no hay ninguna reserva entre esas fechas
             {
+                string exampleJson = "[";
+                List<Coche> leidos = new List<Coche>();
+                Console.WriteLine(codigosCoches.Count);
+                con.Close();
                 con.Open();
-                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from coche where id NOT IN (@id) and lugar=@lugar", con);
-                cmdClave5.Parameters.AddWithValue("@id", codigoCoche);
+                MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from coche where lugar=@lugar", con);
                 cmdClave5.Parameters.AddWithValue("@lugar", lugar);
                 var readerContar = cmdClave5.ExecuteScalar();
                 con.Close();
                 con.Open();
-                MySqlCommand cmdClave2 = new MySqlCommand("select * from coche where id NOT IN (@id) and lugar=@lugar", con);
-                cmdClave2.Parameters.AddWithValue("@id", codigoCoche);
+                MySqlCommand cmdClave2 = new MySqlCommand("select * from coche where lugar=@lugar", con);
                 cmdClave2.Parameters.AddWithValue("@lugar", lugar);
                 MySqlDataReader reader2 = cmdClave2.ExecuteReader();
 
@@ -213,6 +209,8 @@ namespace IO.Swagger.Controllers
                     coche.Puntuacion = reader2.GetInt32("puntuacion");
                     coche.PrecioDia = reader2.GetInt32("precio_Dia");
                     coche.NumPlazas = reader2.GetInt32("numPlazas");
+                    coche.Lugar = reader2.GetString("lugar");
+                    coche.Disponible = reader2.GetBoolean("disponible");
                     if (reader2.GetBoolean("disponible"))
                     {
                         disp = "true";
@@ -222,8 +220,7 @@ namespace IO.Swagger.Controllers
                         disp = "false";
                     }
 
-                    coche.Lugar = reader2.GetString("lugar");
-                    coche.Disponible = reader2.GetBoolean("disponible");
+                    
                     bool repetido = false;
                     for (int i = 0; i < leidos.Count; i++)
                     {
@@ -236,6 +233,7 @@ namespace IO.Swagger.Controllers
                     {
                         leidos.Add(coche);
                         exampleJson += " {\n  \"marca\" : \"" + coche.Marca.ToString() + "\",\n  \"puntuacion\" : " + coche.Puntuacion.ToString() + ",\n  \"num_puertas\" : " + coche.NumPuertas.ToString() + ",\n  \"numPlazas\" : " + coche.NumPlazas.ToString() + ",\n  \"lugar\" : \"" + coche.Lugar.ToString() + "\",\n  \"id\" : " + coche.Id.ToString() + ",\n  \"precio_Dia\" : " + coche.PrecioDia.ToString() + ",\n  \"modelo\" : \"" + coche.Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+
                         if (!(contador).ToString().Equals(readerContar.ToString()))
                         {
                             exampleJson += ", ";
@@ -244,22 +242,105 @@ namespace IO.Swagger.Controllers
                     }
                 }
                 con.Close();
-            }
 
-            exampleJson += " ]";
-            var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
-                : default(List<Coche>);
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                    : default(List<Coche>);
 
-            if (exampleJson == null)
-            {
-                return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+                }
+                else
+                {
+                    coches = JsonConvert.DeserializeObject<List<Coche>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
+
             }
-            else
+            else    //si hay alguna reserva entre esas fechas
             {
-                coches = JsonConvert.DeserializeObject<List<Coche>>(exampleJson);
-                Console.WriteLine(exampleJson);
-                return new ObjectResult(exampleJson) { StatusCode = 200 };
+                string exampleJson = "[";
+                List<Coche> leidos = new List<Coche>();
+                foreach (int codigoCoche in codigosCoches)
+                {
+                    con.Open();
+                    MySqlCommand cmdClave5 = new MySqlCommand("select count(*) from coche where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave5.Parameters.AddWithValue("@id", codigoCoche);
+                    cmdClave5.Parameters.AddWithValue("@lugar", lugar);
+                    var readerContar = cmdClave5.ExecuteScalar();
+                    con.Close();
+                    con.Open();
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from coche where id NOT IN (@id) and lugar=@lugar", con);
+                    cmdClave2.Parameters.AddWithValue("@id", codigoCoche);
+                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    MySqlDataReader reader2 = cmdClave2.ExecuteReader();
+
+                    var contador = 1;
+                    string disp = "";
+
+                    while (reader2.Read())
+                    {
+                        Coche coche = new Coche();
+                        coche.Id = reader2.GetInt32("id");
+                        coche.Marca = reader2.GetString("marca");
+                        coche.Modelo = reader2.GetString("modelo");
+                        coche.NumPuertas = reader2.GetInt32("num_puertas");
+                        coche.Puntuacion = reader2.GetInt32("puntuacion");
+                        coche.PrecioDia = reader2.GetInt32("precio_Dia");
+                        coche.NumPlazas = reader2.GetInt32("numPlazas");
+                        coche.Lugar = reader2.GetString("lugar");
+                        coche.Disponible = reader2.GetBoolean("disponible");
+                        if (reader2.GetBoolean("disponible"))
+                        {
+                            disp = "true";
+                        }
+                        else
+                        {
+                            disp = "false";
+                        }
+
+
+                        bool repetido = false;
+                        for (int i = 0; i < leidos.Count; i++)
+                        {
+                            if (leidos[i].Id == coche.Id)
+                            {
+                                repetido = true;
+                            }
+                        }
+                        if (!repetido)
+                        {
+                            leidos.Add(coche);
+                            exampleJson += " {\n  \"marca\" : \"" + coche.Marca.ToString() + "\",\n  \"puntuacion\" : " + coche.Puntuacion.ToString() + ",\n  \"num_puertas\" : " + coche.NumPuertas.ToString() + ",\n  \"numPlazas\" : " + coche.NumPlazas.ToString() + ",\n  \"lugar\" : \"" + coche.Lugar.ToString() + "\",\n  \"id\" : " + coche.Id.ToString() + ",\n  \"precio_Dia\" : " + coche.PrecioDia.ToString() + ",\n  \"modelo\" : \"" + coche.Modelo.ToString() + "\",\n  \"disponible\" : " + disp.ToString() + "\n}";
+
+                            if (!(contador).ToString().Equals(readerContar.ToString()))
+                            {
+                                exampleJson += ", ";
+                            }
+                            contador++;
+                        }
+                    }
+                    con.Close();
+                }
+
+                exampleJson += " ]";
+                var example = exampleJson != null
+                    ? JsonConvert.DeserializeObject<List<Coche>>(exampleJson)
+                    : default(List<Coche>);
+
+                if (exampleJson == null)
+                {
+                    return new ObjectResult("ERROR 400: NO EXISTEN COCHES") { StatusCode = 400 };
+                }
+                else
+                {
+                    coches = JsonConvert.DeserializeObject<List<Coche>>(exampleJson);
+                    Console.WriteLine(exampleJson);
+                    return new ObjectResult(exampleJson) { StatusCode = 200 };
+                }
             }
         }
 

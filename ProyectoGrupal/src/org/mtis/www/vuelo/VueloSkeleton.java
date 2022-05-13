@@ -37,8 +37,8 @@ import java.sql.ResultSet;
                    	 ResultSet s = null; 
                    	 try
                         {
-                             Class.forName("com.mysql.cj.jdbc.Driver");
-                             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/companiarea?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC","root","adelfr.2000");
+                   		Class.forName("com.mysql.jdbc.Driver");
+                             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/companiarea","root","root");
                            	 PreparedStatement stmt= con.prepareStatement("select *from cliente where dni='"+asignarAsiento.getDNI()+"';");
                              ResultSet result = stmt.executeQuery();
                              queryOk = result.next();
