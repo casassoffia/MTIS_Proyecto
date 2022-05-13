@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- This file was auto-generated from WSDL --><!-- by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST) --><serviceGroup>
+    <service name="Validar">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.mtis.www.validar.ValidarMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">org.mtis.www.validar.ValidarSkeleton</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="ValidarCliente" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.mtis.org/Validar/">
+            <actionMapping>http://www.mtis.org/Validar/ValidarCliente</actionMapping>
+            <outputActionMapping>http://www.mtis.org/Validar/Validar/ValidarClienteResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
