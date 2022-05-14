@@ -288,10 +288,10 @@ namespace IO.Swagger.Controllers
                     var readerContar = cmdClave5.ExecuteScalar();
                     con.Close();
                     con.Open();
-                    MySqlCommand cmdClave2 = new MySqlCommand("select * from billete where id NOT IN (@id) and lugarIn=@lugar and lugarOut=@lugar", con);
+                    MySqlCommand cmdClave2 = new MySqlCommand("select * from billete where id NOT IN (@id) and lugar=@lugar", con);
                     cmdClave2.Parameters.AddWithValue("@id", codigoBillete);
                     cmdClave2.Parameters.AddWithValue("@lugar", lugar);
-                    cmdClave2.Parameters.AddWithValue("@lugar", lugar);
+                    
                     MySqlDataReader reader2 = cmdClave2.ExecuteReader();
 
                     var contador = 1;
