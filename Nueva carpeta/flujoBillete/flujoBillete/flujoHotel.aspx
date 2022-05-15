@@ -1,10 +1,16 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="flujoBillete.aspx.cs" Inherits="flujoBillete._Default"Async="true"  %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="flujoHotel.aspx.cs" Inherits="flujoBillete.flujoHotel"Async="true" %>
 
-<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+<!DOCTYPE html>
 
-    <div class="jumbotron">
-        <h1>Reserva el  Billete</h1>
-        <p class="lead">Para poder reservar el billete debes introducir los siguientes datos:</p>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+     <form id="form1" runat="server">
+
+
+     <div class="jumbotron">
+        <h1>Reserva el  Hotel</h1>
+        <p class="lead">Para poder reservar el hotel debes introducir los siguientes datos:</p>
         <p class="lead">DNI:</p>
         <p class="lead">
             <asp:TextBox ID="dni" runat="server"></asp:TextBox>
@@ -33,14 +39,17 @@
         <p class="lead">
             <asp:TextBox ID="precioFin" runat="server"></asp:TextBox>
         </p>
-        <p class="lead">
-            &nbsp;</p>
-        <p>
-            <asp:Button ID="reservarBillete" runat="server" Text="Reservar" OnClick="crear" Width="180px" />
+         <p class="lead">
+             &nbsp;</p>
+         </div>
+
+         <p class="lead">
+             &nbsp;</p>
+         <p>
+            <asp:Button ID="reservarHotel" runat="server" Text="Reservar" OnClick="crear" Width="180px" />
         </p>
-        <asp:Label ID="lblReserva" runat="server" />
-    </div>
+         <asp:Label ID="lblReserva" runat="server" />
+     </form>
 
-   
 
-</asp:Content>
+</html>

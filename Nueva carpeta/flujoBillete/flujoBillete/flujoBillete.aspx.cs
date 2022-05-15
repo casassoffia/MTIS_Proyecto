@@ -22,17 +22,22 @@ namespace flujoBillete
             var req = new HttpRequestMessage();
             req.RequestUri = new Uri("http://localhost:8083/");
             req.Method = HttpMethod.Post;
+            try { 
+                var exampleJson = "{\"fechaInicio\" : \"" + fechaInicio.Text.ToString() + "\",\n  \"dni\" : \"" + dni.Text.ToString() + "\",\n  \"precioInicio\" : \"" + precioInicio.Text.ToString()+"\",\n  \"precioFin\" : \""+precioFin.Text.ToString() + "\",\n  \"lugar\" : \"" + lugar.Text.ToString() + "\",\n  \"fechaFin\" : \"" + fechaFin.Text.ToString()+ "\",\n  \"numPersonas\" : \"" + numPersonas.Text.ToString()  + "\"\n}";
+                var stringContent = new StringContent(JsonConvert.SerializeObject(exampleJson), Encoding.UTF8, "application/json");
+                req.Content = stringContent;
 
-            var exampleJson = "{\"fechaInicio\" : \"" + fechaInicio.Text.ToString() + "\",\n  \"dni\" : \"" + dni.Text.ToString() + "\",\n  \"precioInicio\" : \"" + precioInicio.Text.ToString()+"\",\n  \"precioFin\" : \""+precioFin.Text.ToString() + "\",\n  \"lugar\" : \"" + lugar.Text.ToString() + "\",\n  \"fechaFin\" : \"" + fechaFin.Text.ToString()+ "\",\n  \"numPersonas\" : \"" + numPersonas.Text.ToString()  + "\"\n}";
-            var stringContent = new StringContent(JsonConvert.SerializeObject(exampleJson), Encoding.UTF8, "application/json");
-            req.Content = stringContent;
+                var cl = new HttpClient();
+                HttpResponseMessage rr = await cl.SendAsync(req).ConfigureAwait(false);
+                rr.EnsureSuccessStatusCode();
+                string cont = await rr.Content.ReadAsStringAsync().ConfigureAwait(false);
+                lblReserva.Text = " La reserva se ha realizado correctamente";
+            }
+            catch (Exception ex)
+            {
+                lblReserva.Text = "No se ha podido realizar la reserva";
+            }
 
-            var cl = new HttpClient();
-            HttpResponseMessage rr = await cl.SendAsync(req).ConfigureAwait(false);
-            rr.EnsureSuccessStatusCode();
-            string cont = await rr.Content.ReadAsStringAsync().ConfigureAwait(false);
-            
-            
-        }
+}
     }
 }

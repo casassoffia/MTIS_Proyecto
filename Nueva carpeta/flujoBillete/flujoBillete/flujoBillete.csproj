@@ -150,6 +150,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="flujoBillete.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="flujoCoche.aspx" />
+    <Content Include="flujoHotel.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -161,7 +163,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
-    <Content Include="prueba.aspx" />
+    <Content Include="Pack.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -220,17 +222,31 @@
     <Compile Include="flujoBillete.aspx.designer.cs">
       <DependentUpon>flujoBillete.aspx</DependentUpon>
     </Compile>
+    <Compile Include="flujoCoche.aspx.cs">
+      <DependentUpon>flujoCoche.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="flujoCoche.aspx.designer.cs">
+      <DependentUpon>flujoCoche.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="flujoHotel.aspx.cs">
+      <DependentUpon>flujoHotel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="flujoHotel.aspx.designer.cs">
+      <DependentUpon>flujoHotel.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="prueba.aspx.cs">
-      <DependentUpon>prueba.aspx</DependentUpon>
+    <Compile Include="Pack.aspx.cs">
+      <DependentUpon>Pack.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="prueba.aspx.designer.cs">
-      <DependentUpon>prueba.aspx</DependentUpon>
+    <Compile Include="Pack.aspx.designer.cs">
+      <DependentUpon>Pack.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

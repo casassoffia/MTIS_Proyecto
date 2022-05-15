@@ -11,8 +11,17 @@ namespace flujoBillete
 {
 
 
-    public partial class _Default
+    public partial class flujoHotel
     {
+
+        /// <summary>
+        /// Control form1.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
         /// Control dni.
@@ -78,13 +87,13 @@ namespace flujoBillete
         protected global::System.Web.UI.WebControls.TextBox precioFin;
 
         /// <summary>
-        /// Control reservarBillete.
+        /// Control reservarHotel.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button reservarBillete;
+        protected global::System.Web.UI.WebControls.Button reservarHotel;
 
         /// <summary>
         /// Control lblReserva.

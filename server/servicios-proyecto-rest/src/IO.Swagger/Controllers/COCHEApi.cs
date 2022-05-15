@@ -54,6 +54,10 @@ namespace IO.Swagger.Controllers
                     mejorCoche = listaCoches[i];
                 }
             }
+            if (mejorCoche.Disponible == null)
+            {
+                return new ObjectResult("error");
+            }
             if (mejorCoche.Disponible.Value)
             {
                 disp = "true";

@@ -58,6 +58,10 @@ namespace IO.Swagger.Controllers
                     mejorBillete = listaBilletes[i];
                 }
             }
+            if (mejorBillete.Disponibilidad == null)
+            {
+                return new ObjectResult("error");
+            }
             if (mejorBillete.Disponibilidad.Value)
             {
                 disp = "true";

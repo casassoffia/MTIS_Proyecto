@@ -443,6 +443,10 @@ namespace IO.Swagger.Controllers
                     mejorHotel = listaHoteles[i];
                 }
             }
+            if (mejorHotel.Disponibilidad == null)
+            {
+                return new ObjectResult("error");
+            }
             if (mejorHotel.Disponibilidad.Value)
             {
                 disp = "true";
